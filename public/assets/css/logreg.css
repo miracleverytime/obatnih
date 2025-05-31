@@ -1,0 +1,253 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap');
+
+/* Reset dan Font */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
+}
+
+/* Body */
+body {
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: url("../gambar/latarweb.jpg") no-repeat center center/cover;
+  overflow: hidden;
+}
+
+::selection {
+  color: #fff;
+  background: #476bfa;
+}
+
+
+/* Wrapper */
+.wrapper {
+  width: 520px;
+  padding: 30px;
+  margin-top: 40px;
+  border-radius: 12px;
+  text-align: center;
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(25px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease;
+}
+    
+.wrapper header {
+  font-size: 23px;
+  font-weight: 600;
+  color: #333;
+}
+
+/* Form */
+.wrapper form {
+  margin: 30px 0;
+}
+
+form .field {
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+.input-area {
+  width: 100%;
+  height: 50px;
+  position: relative;
+}
+
+.input-area i {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 18px;
+  pointer-events: none;
+}
+
+.input-area .error-icon {
+  right: 15px;
+  color: #dc3545;
+}
+
+form input[type="text"],
+form input[type="password"],
+form input[type="email"],
+form input[type="date"],
+form input[type="number"] {
+  width: 100%;
+  height: 100%;
+  padding: 0 20px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.6);
+  outline: none;
+  transition: 0.3s;
+}
+
+form input:focus {
+  border-color: #5372F0;
+  background: rgba(255, 255, 255, 0.9);
+}
+
+form input[type="submit"] {
+  width: 100%;
+  height: 50px;
+  background: #1f5ef0;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+form input[type="submit"]:hover {
+  background: #032dd8;
+}
+
+form .pass-txt {
+  text-align: right;
+  font-size: 13px;
+}
+
+/* Error */
+.error-txt {
+  font-size: 13px;
+  color: #dc3545;
+  text-align: left;
+  margin-top: 5px;
+  display: none;
+}
+
+.field.shake input,
+.field.error input {
+  border-color: #dc3545;
+}
+
+.field.shake .error-txt,
+.field.error .error-txt {
+  display: block;
+}
+
+/* Sign-in Text */
+.sign-txt {
+  font-size: 14px;
+  margin-top: 20px;
+  color: #333;
+}
+
+.wrapper a {
+  color: #0548e3;
+  text-decoration: none;
+  transition: 0.2s;
+}
+
+.wrapper a:hover {
+  text-decoration: underline;
+}
+
+/* DOB Field */
+.field.dob label {
+  display: block;
+  text-align: left;
+  margin-bottom: 5px;
+  font-size: 14px;
+  color: #333;
+}
+
+.field.dob input[type="date"] {
+  width: 100%;
+  height: 50px;
+  padding: 0 20px;
+  font-size: 16px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  background: rgba(255, 255, 255, 0.6);
+  transition: 0.3s;
+}
+
+.field.dob input[type="date"]:focus {
+  outline: none;
+  border-color: #5372F0;
+  background: rgba(255, 255, 255, 0.9);
+}
+
+/* Hilangkan panah di input number */
+input[type="number"]::-webkit-inner-spin-button {
+  display: none;
+}
+
+/* Responsif */
+@media (max-width: 600px) {
+  .wrapper {
+    width: 90%;
+    padding: 25px 20px;
+  }
+
+  .wrapper header {
+    font-size: 20px;
+  }
+
+  .field.dob label {
+    padding-right: 0 !important;
+  }
+}
+
+/* Animasi shake */
+@keyframes shake {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  20%, 60% {
+    transform: translateX(-10px);
+  }
+  40%, 80% {
+    transform: translateX(10px);
+  }
+}
+
+/* Efek shake untuk field */
+.field.shake {
+  animation: shake 0.5s;
+  border-color: #dc3545 !important; /* Optional: warna merah saat shake */
+}
+
+/*Visibilitas*/
+.password .input-area {
+      position: relative;
+    }
+    
+    .password-toggle {
+      position: absolute;
+      right: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      cursor: pointer;
+      color: #999;
+      font-size: 18px;
+      transition: color 0.3s ease;
+      z-index: 10;
+      width: 20px;
+      height: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      pointer-events: auto; 
+    }
+    
+    .password-toggle:hover {
+      color: #333;
+    }
+    
+    .password input {
+      padding-right: 45px;
+      position: relative;
+      z-index: 1; 
+    }
+
+    
