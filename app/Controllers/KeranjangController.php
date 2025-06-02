@@ -1,0 +1,225 @@
+<?php
+
+namespace App\Controllers;
+
+use App\Controllers\BaseController;
+use App\Models\KeranjangModel;
+use App\Models\ObatModel;
+use App\Models\TransaksiModel;
+use CodeIgniter\HTTP\ResponseInterface;
+
+class KeranjangController extends BaseController
+{
+    public function index()
+{
+    $db = \Config\Database::connect();
+    
+    // Query join keranjang dengan obat
+    $keranjang = $db->table('keranjang')
+        ->select('keranjang.id, keranjang.jumlah, obat.nama_obat')
+        ->join('obat', 'obat.id_obat = keranjang.id_obat') // sesuaikan field join
+        ->get()
+        ->getResultArray();
+
+    // Ambil daftar obat (untuk form input)
+    $obatModel = new \App\Models\ObatModel();
+    $daftar_obat = $obatModel->findAll();
+
+    return view('user/keranjang', [
+        'keranjang' => $keranjang,
+        'daftar_obat' => $daftar_obat,
+    ]);
+}
+
+
+
+    public function tambah()
+{
+    $nama_obat = $this->request->getPost('nama_obat');
+    $jumlah = (int)$this->request->getPost('jumlah'); // pastikan tipe data integer
+
+    $obatModel = new ObatModel();
+    $obat = $obatModel->where('nama_obat', $nama_obat)->first();
+
+    if ($obat) {
+        // Cek stok
+        if ($jumlah > $obat['stok']) {
+            return redirect()->back()->with('error', 'Stok obat tidak mencukupi.');
+        }
+
+        // Kurangi stok obat
+        $obatModel->update($obat['id_obat'], [
+            'stok' => $obat['stok'] - $jumlah,
+        ]);
+
+        // Tambah data ke keranjang
+        $data = [
+            'id_obat' => $obat['id_obat'], // sesuaikan dengan nama kolom di tabel keranjang
+            'nama_obat' => $obat['nama_obat'],
+            'jumlah' => $jumlah,
+        ];
+
+        $keranjangModel = new KeranjangModel();
+        $keranjangModel->insert($data);
+
+        return redirect()->back()->with('success', 'Berhasil menambahkan ke keranjang dan stok diperbarui.');
+    } else {
+        return redirect()->back()->with('error', 'Obat tidak ditemukan.');
+    }
+}
+
+public function hapus($id)
+{
+    if (!is_numeric($id)) {
+        return redirect()->back()->with('error', 'ID tidak valid.');
+    }
+
+    $keranjangModel = new \App\Models\KeranjangModel();
+    $obatModel = new \App\Models\ObatModel();
+
+    // Cari item di keranjang
+    $keranjang = $keranjangModel->find($id);
+    if (!$keranjang) {
+        return redirect()->back()->with('error', 'Item tidak ditemukan di keranjang.');
+    }
+
+    // Cari data obat berdasarkan ID obat yang ada di keranjang
+    $obat = $obatModel->find($keranjang['id_obat']);
+    if (!$obat) {
+        return redirect()->back()->with('error', 'Data obat tidak ditemukan. Tidak bisa mengembalikan stok.');
+    }
+
+    // Mulai transaksi database
+    $db = \Config\Database::connect();
+    $db->transStart();
+
+    // Tambahkan kembali stok obat
+    $stok_baru = $obat['stok'] + $keranjang['jumlah'];
+    $obatModel->update($obat['id_obat'], [ // PASTIKAN nama primary key-nya 'id'
+        'stok' => $stok_baru
+    ]);
+
+    // Hapus item dari keranjang
+    $keranjangModel->delete($id);
+
+    // Selesaikan transaksi
+    $db->transComplete();
+
+    // Cek apakah transaksi sukses
+    if ($db->transStatus() === false) {
+        return redirect()->back()->with('error', 'Gagal menghapus item dari keranjang. Silakan coba lagi.');
+    }
+
+    return redirect()->back()->with('success', 'Item berhasil dihapus dan stok obat diperbarui.');
+}
+
+
+
+public function bayar($id)
+{
+    // Cek apakah request berupa POST
+    if (!$this->request->is('post')) {
+        return redirect()->back()->with('error', 'Akses tidak valid.');
+    }
+
+    // Validasi ID
+    if (!is_numeric($id)) {
+        return redirect()->back()->with('error', 'ID tidak valid.');
+    }
+
+    $keranjangModel  = new \App\Models\KeranjangModel();
+    $obatModel       = new \App\Models\ObatModel();
+    $transaksiModel  = new \App\Models\TransaksiModel();
+
+    $keranjang = $keranjangModel->find($id);
+    if (!$keranjang) {
+        return redirect()->back()->with('error', 'Item tidak ditemukan di keranjang.');
+    }
+
+    $obat = $obatModel->find($keranjang['id_obat']);
+    if (!$obat) {
+        return redirect()->back()->with('error', 'Obat tidak ditemukan. Tidak bisa diproses.');
+    }
+
+    if ($obat['stok'] < $keranjang['jumlah']) {
+        return redirect()->back()->with('error', 'Stok obat tidak mencukupi untuk transaksi.');
+    }
+
+    $db = \Config\Database::connect();
+    $db->transStart();
+
+    // Kurangi stok obat
+    $stokBaru = $obat['stok'] - $keranjang['jumlah'];
+    $obatModel->update($obat['id_obat'], ['stok' => $stokBaru]);
+
+    // Hitung total dan waktu transaksi
+    $waktuTransaksi = date('Y-m-d H:i:s');
+    $totalHarga = $keranjang['jumlah'] * $obat['harga_satuan'];
+
+    // Simpan ke tabel transaksi
+    $transaksiModel->insert([
+        'id_obat'     => $keranjang['id_obat'],
+        'jumlah'      => $keranjang['jumlah'],
+        'total_harga' => $totalHarga,
+        'tanggal'     => $waktuTransaksi,
+    ]);
+
+    // Hapus dari keranjang
+    $keranjangModel->delete($id);
+
+    $db->transComplete();
+
+    if ($db->transStatus() === false) {
+        return redirect()->back()->with('error', 'Gagal memproses transaksi.');
+    }
+
+    return view('user/bayar_sukses', [
+        'obat'        => $obat,
+        'jumlah'      => $keranjang['jumlah'],
+        'total_harga' => $totalHarga,
+        'waktu'       => $waktuTransaksi
+    ]);
+}
+    
+
+public function edit($id)
+{
+    $keranjangModel = new KeranjangModel();
+    $obatModel = new ObatModel();
+
+    // Ambil item keranjang berdasarkan ID
+    $item = $keranjangModel->find($id);
+
+    if (!$item) {
+        throw new \CodeIgniter\Exceptions\PageNotFoundException("Item keranjang dengan ID $id tidak ditemukan.");
+    }
+
+    $data = [
+        'item' => $item, // ganti dari 'keranjang' menjadi 'item'
+        'daftar_obat' => $obatModel->findAll()
+    ];
+
+    return view('user/edit_keranjang', $data);
+}
+
+
+public function update($id)
+{
+    $keranjangModel = new KeranjangModel();
+
+    $data = [
+        'nama_obat' => $this->request->getPost('nama_obat'),
+        'jumlah'    => $this->request->getPost('jumlah'),
+    ];
+
+    $keranjangModel->update($id, $data);
+
+    return redirect()->to(base_url('user/keranjang'))->with('success', 'Data keranjang berhasil diperbarui.');
+}
+
+}
+
+
+
+
+
