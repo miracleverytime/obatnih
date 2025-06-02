@@ -2,8 +2,24 @@
 
 
 <?= $this->Section('content'); ?>
+<style>
+  .error-message {
+  background-color: #f8d7da;
+  border: 1px solid #f5c6cb;
+  color: #721c24;
+  padding: 10px 15px;
+  border-radius: 10px;
+  margin-bottom: 1rem;
+  font-size: 0.875rem;
+}
+</style>
   <div class="wrapper">
     <header>Buat Akun</header>
+        <?php if(session()->getFlashdata('error')): ?>
+          <div class="error-message">
+          <?= session()->getFlashdata('error'); ?>
+      </div>
+    <?php endif; ?>
     <form action="<?= base_url('signup/submit') ?>" method="post">
       <div class="field nama">
         <div class="input-area">
@@ -61,4 +77,4 @@
       Sudah Punya Akun? <a href="<?= base_url('login') ?>">Masuk Sekarang</a>
     </div>
   </div>
-<?= $this->endSection(''); ?>
+<?= $this->endSection(); ?>

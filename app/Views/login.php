@@ -6,9 +6,25 @@
   .wrapper {
   width: 380px;
 }
+
+  .error-message {
+  background-color: #f8d7da;
+  border: 1px solid #f5c6cb;
+  color: #721c24;
+  padding: 10px 15px;
+  border-radius: 10px;
+  margin-bottom: 1rem;
+  font-size: 0.875rem;
+}
+</style>
 </style>
   <div class="wrapper">
     <header>Masuk</header>
+            <?php if(session()->getFlashdata('error')): ?>
+          <div class="error-message">
+          <?= session()->getFlashdata('error'); ?>
+      </div>
+    <?php endif; ?>
     <form action="<?= base_url('login/cek') ?>" method="post">
       <div class="field email">
         <div class="input-area">
