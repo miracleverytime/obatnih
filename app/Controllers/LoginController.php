@@ -21,51 +21,52 @@ class LoginController extends Controller
     }
 
     // Memproses login
-    public function login()
-    {
-        $email    = $this->request->getPost('email');
-        $password = $this->request->getPost('password');
+public function login()
+{
+    $email    = $this->request->getPost('email');
+    $password = $this->request->getPost('password');
 
-        $models = [
-            'user'     => new UserModel(),
-            'admin'    => new AdminModel(),
-            'apoteker' => new ApotekerModel(),
-        ];
+    // Cek input kosong
+    if (empty($email) || empty($password)) {
+        return redirect()->back()->withInput()->with('error', 'Email dan password wajib diisi.');
+    }
 
-        foreach ($models as $role => $model) {
-            $user = $model->where('email', $email)->first();
+    $models = [
+        'user'     => new UserModel(),
+        'admin'    => new AdminModel(),
+        'apoteker' => new ApotekerModel(),
+    ];
 
-            if ($user) {
-                if (password_verify($password, $user['password'])) {
-                    session()->set([
-                        'id'       => $user['id'],
-                        'email'    => $user['email'],
-                        'nama'     => $user['nama'] ?? '',
-                        'role'     => $role,
-                        'isLogin'  => true,
-                    ]);
+    foreach ($models as $role => $model) {
+        $user = $model->where('email', $email)->first();
 
-                    // Redirect sesuai role
-                    if ($role === 'user') {
-                        return redirect()->to('/user/katalog');
-                    } elseif ($role === 'admin') {
-                        return redirect()->to('/admin/dashboard');
-                    } elseif ($role === 'apoteker') {
-                        return redirect()->to('/apoteker/validasi');
-                    }
-                } else {
-                    session()->destroy(); //  Hapus session biar tidak nyangkut
-                    return redirect()->back()->with('error', 'Password salah');
+        if ($user) {
+            if (password_verify($password, $user['password'])) {
+                session()->set([
+                    'id'      => $user['id'],
+                    'email'   => $user['email'],
+                    'nama'    => $user['nama'] ?? '',
+                    'role'    => $role,
+                    'isLogin' => true,
+                ]);
+
+                // Redirect sesuai role
+                if ($role === 'user') {
+                    return redirect()->to('/user/katalog');
+                } elseif ($role === 'admin') {
+                    return redirect()->to('/admin/dashboard');
+                } elseif ($role === 'apoteker') {
+                    return redirect()->to('/apoteker/validasi');
                 }
+            } else {
+                return redirect()->back()->withInput()->with('error', 'Password salah');
             }
         }
-
-        session()->destroy(); //  Email tidak ditemukan juga reset session
-        return redirect()->back()->with('error', 'Email tidak ditemukan');
     }
 
-    public function hash()
-    {
-        echo password_hash('wifiburik14', PASSWORD_DEFAULT);
-    }
+    return redirect()->back()->withInput()->with('error', 'Email tidak ditemukan');
+}
+
+
+
 }

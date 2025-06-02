@@ -60,7 +60,7 @@
     <li class="nav-item"><a class="nav-link" href="<?= base_url('user/katalog') ?>">Riwayat</a></li>
     <li class="nav-item"><a class="nav-link" href="<?= base_url('user/katalog') ?>">Bantuan</a></li>
     <li class="nav-item">
-      <a class="btn btn-dark" href="#"><i class="fa fa-shopping-cart"></i> Keranjang</a>
+      <a class="btn btn-dark" href="<?= base_url('user/keranjang') ?>"><i class="fa fa-shopping-cart"></i> Keranjang</a>
     </li>
   </ul>
 </nav>
