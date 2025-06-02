@@ -33,40 +33,45 @@ class KeranjangController extends BaseController
 
 
 
-    public function tambah()
+public function tambah()
 {
-    $nama_obat = $this->request->getPost('nama_obat');
-    $jumlah = (int)$this->request->getPost('jumlah'); // pastikan tipe data integer
+    $id_obat = $this->request->getPost('id_obat');
+    $jumlah = (int)$this->request->getPost('jumlah');
 
-    $obatModel = new ObatModel();
-    $obat = $obatModel->where('nama_obat', $nama_obat)->first();
+    if (!$id_obat || $jumlah <= 0) {
+        return redirect()->back()->with('error', 'ID obat atau jumlah tidak valid.');
+    }
 
-    if ($obat) {
-        // Cek stok
-        if ($jumlah > $obat['stok']) {
-            return redirect()->back()->with('error', 'Stok obat tidak mencukupi.');
-        }
+    $obatModel = new \App\Models\ObatModel();
+    $keranjangModel = new \App\Models\KeranjangModel();
 
-        // Kurangi stok obat
-        $obatModel->update($obat['id_obat'], [
-            'stok' => $obat['stok'] - $jumlah,
-        ]);
+    $obat = $obatModel->find($id_obat);
 
-        // Tambah data ke keranjang
-        $data = [
-            'id_obat' => $obat['id_obat'], // sesuaikan dengan nama kolom di tabel keranjang
-            'nama_obat' => $obat['nama_obat'],
-            'jumlah' => $jumlah,
-        ];
-
-        $keranjangModel = new KeranjangModel();
-        $keranjangModel->insert($data);
-
-        return redirect()->back()->with('success', 'Berhasil menambahkan ke keranjang dan stok diperbarui.');
-    } else {
+    if (!$obat) {
         return redirect()->back()->with('error', 'Obat tidak ditemukan.');
     }
+
+    if ($jumlah > $obat['stok']) {
+        return redirect()->back()->with('error', 'Stok obat tidak mencukupi.');
+    }
+
+    // Simpan ke tabel keranjang terlebih dahulu
+    $keranjangModel->insert([
+        'id_obat'    => $id_obat,
+        'nama_obat'  => $obat['nama_obat'],
+        'jumlah'     => $jumlah
+    ]);
+
+    // Kurangi stok di tabel obat
+    $obatModel->update($id_obat, [
+        'stok' => $obat['stok'] - $jumlah
+    ]);
+
+    return redirect()->back()->with('success', 'Obat berhasil ditambahkan ke keranjang.');
 }
+
+
+
 
 public function hapus($id)
 {
