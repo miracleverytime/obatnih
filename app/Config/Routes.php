@@ -44,6 +44,7 @@ $routes->group('user', ['filter' => 'auth:user'], function ($routes) {
     $routes->get('keranjang/hapus/(:num)', 'KeranjangController::hapus/$1');
     $routes->post('keranjang/bayar/(:num)', 'KeranjangController::bayar/$1');
     $routes->get('keranjang/edit/(:num)', 'KeranjangController::edit/$1');
+    $routes->get('keranjang/update/(:num)', 'KeranjangController::update/$1');
 
 });
 

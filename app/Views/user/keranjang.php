@@ -368,6 +368,16 @@
             margin: 0;
         }
     }
+
+    .error-message {
+    background-color: #f8d7da;
+    border: 1px solid #f5c6cb;
+    color: #721c24;
+    padding: 10px 15px;
+    border-radius: 10px;
+    margin-bottom: 1rem;
+    font-size: 0.875rem;
+    }
 </style>
 
 <!-- Navigation Bar -->
@@ -375,6 +385,11 @@
 
 <div class="main-container">
     <h1 class="page-title">Keranjang</h1>
+        <?php if(session()->getFlashdata('error')): ?>
+        <div class="error-message">
+        <?= session()->getFlashdata('error'); ?>
+      </div>
+    <?php endif; ?>
     
     <!-- Add Item Section -->
     <div class="add-item-section">
@@ -404,13 +419,18 @@
                 <?php foreach ($keranjang as $item): ?>
                     <div class="cart-item">
                         <div class="product-image">
-                            <div class="icon"></div>
+                        <?php 
+                            $gambar = !empty($item['gambar_obat']) ? $item['gambar_obat'] : 'default.jpg'; 
+                        ?>
+                        <img src="<?= base_url('assets/gambar/' . $gambar) ?>" alt="<?= esc($item['nama_obat']) ?>" style="width: 100%; height: 100%; object-fit: contain;">
                         </div>
-                        
                         <div class="product-details">
                             <div class="product-name"><?= esc($item['nama_obat']) ?></div>
-                            <div class="product-description">Deskripsi singkat</div>
-                            <div class="product-price"><?= $obat['harga_satuan'] ?></div>
+                            <div class="product-description"><?= esc($item['deskripsi']) ?></div>
+                            <div class="product-price">
+                                Rp <?= number_format($item['harga_satuan'], 0, ',', '.') ?> x <?= $item['jumlah'] ?> = 
+                                Rp <?= number_format($item['harga_satuan'] * $item['jumlah'], 0, ',', '.') ?>
+                            </div>
                         </div>
                         
                         <div class="quantity-section">
@@ -444,21 +464,21 @@
             <div class="cart-summary">
                 <div class="summary-row">
                     <span>SUBTOTAL</span>
-                    <span>RP. XXX</span>
+                    <span>Rp <?= number_format($subtotal, 0, ',', '.') ?></span>
                 </div>
                 <div class="summary-row">
                     <span>PENGIRIMAN</span>
-                    <span>RP. XXX</span>
+                    <span>Rp 0</span>
                 </div>
                 <div class="summary-row">
                     <span>PAJAK</span>
-                    <span>RP. XXX</span>
+                    <span>Rp 0</span>
                 </div>
                 <div class="summary-total">
                     <span>TOTAL</span>
-                    <span>RP. XXX</span>
+                    <span>Rp <?= number_format($subtotal, 0, ',', '.') ?></span>
                 </div>
-                
+
                 <form action="<?= base_url('user/keranjang/checkout') ?>" method="post">
                     <?= csrf_field() ?>
                     <button type="submit" class="checkout-btn">Selanjutnya</button>

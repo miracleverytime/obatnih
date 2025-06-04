@@ -10,27 +10,32 @@ use CodeIgniter\HTTP\ResponseInterface;
 
 class KeranjangController extends BaseController
 {
-    public function index()
+public function index()
 {
     $db = \Config\Database::connect();
-    
-    // Query join keranjang dengan obat
+
+    // Ambil data keranjang dan obat
     $keranjang = $db->table('keranjang')
-        ->select('keranjang.id, keranjang.jumlah, obat.nama_obat')
-        ->join('obat', 'obat.id_obat = keranjang.id_obat') // sesuaikan field join
+        ->select('keranjang.id, keranjang.jumlah, obat.nama_obat, obat.gambar_obat, obat.harga_satuan, obat.deskripsi')
+        ->join('obat', 'obat.id_obat = keranjang.id_obat')
         ->get()
         ->getResultArray();
 
-    // Ambil daftar obat (untuk form input)
+    $subtotal = 0;
+    foreach ($keranjang as $item) {
+        $subtotal += $item['harga_satuan'] * $item['jumlah'];
+    }
+
+    // Ambil daftar obat (untuk select input)
     $obatModel = new \App\Models\ObatModel();
     $daftar_obat = $obatModel->findAll();
 
     return view('user/keranjang', [
-        'keranjang' => $keranjang,
-        'daftar_obat' => $daftar_obat,
+        'keranjang'    => $keranjang,
+        'daftar_obat'  => $daftar_obat,
+        'subtotal'     => $subtotal,
     ]);
 }
-
 
 
     public function tambah()
