@@ -108,18 +108,25 @@
           <div class="price text-success">Rp <?= number_format($obat['harga_satuan'], 0, ',', '.') ?> / pcs</div>
         </div>
 
-        <div class="d-flex flex-column gap-2 mt-4">
+        <!-- Form Tambahkan ke Keranjang -->
+        <div class="mt-4">
           <?php if($obat['stok'] > 0): ?>
-            <button class="btn btn-primary w-100" onclick="addToCart(<?= $obat['id_obat'] ?>)">
-              <i class="fas fa-shopping-cart"></i> Tambahkan ke Keranjang
-            </button>
+            <form action="<?= base_url('keranjang/tambah') ?>" method="post" class="d-grid gap-2">
+              <input type="hidden" name="id_obat" value="<?= $obat['id_obat'] ?>">
+              <label for="jumlah" class="form-label">Jumlah:</label>
+              <input type="number" name="jumlah" id="jumlah" value="1" min="1" max="<?= $obat['stok'] ?>" class="form-control mb-2" required>
+
+              <button type="submit" class="btn btn-primary w-100">
+                <i class="fas fa-shopping-cart"></i> Tambahkan ke Keranjang
+              </button>
+            </form>
           <?php else: ?>
             <button class="btn btn-secondary w-100" disabled>
               <i class="fas fa-ban"></i> Stok Habis
             </button>
           <?php endif; ?>
 
-          <a href="<?= base_url('user/katalog') ?>" class="btn btn-outline-secondary w-100">
+          <a href="<?= base_url('user/katalog') ?>" class="btn btn-outline-secondary mt-2 w-100">
             <i class="fas fa-arrow-left"></i> Kembali ke Katalog
           </a>
         </div>
@@ -134,13 +141,6 @@
   </div>
 </div>
 
-
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script>
-function addToCart(productId) {
-  alert('Produk berhasil ditambahkan ke keranjang!');
-}
-</script>
-
 </body>
 </html>
