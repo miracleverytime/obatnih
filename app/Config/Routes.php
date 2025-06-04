@@ -40,7 +40,7 @@ $routes->group('user', ['filter' => 'auth:user'], function ($routes) {
     $routes->get('katalog', 'UserController::katalog');
     $routes->get('detail_produk/(:num)', 'UserController::detailp/$1');
     $routes->get('keranjang', 'KeranjangController::index');
-    $routes->get('keranjang/tambah', 'KeranjangController::tambah');
+    $routes->post('keranjang/tambah', 'KeranjangController::tambah');
     $routes->get('keranjang/hapus/(:num)', 'KeranjangController::hapus/$1');
     $routes->post('keranjang/bayar/(:num)', 'KeranjangController::bayar/$1');
     $routes->get('keranjang/edit/(:num)', 'KeranjangController::edit/$1');

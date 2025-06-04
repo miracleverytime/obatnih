@@ -378,40 +378,28 @@
     margin-bottom: 1rem;
     font-size: 0.875rem;
     }
+
+    .success-message {
+    background-color: #f8d7da;
+    border: 1px solid #f5c6cb;
+    color:rgb(44, 140, 31);
+    padding: 10px 15px;
+    border-radius: 10px;
+    margin-bottom: 1rem;
+    font-size: 0.875rem;
+    }
 </style>
 
 <!-- Navigation Bar -->
 
 
 <div class="main-container">
-    <h1 class="page-title">Keranjang</h1>
         <?php if(session()->getFlashdata('error')): ?>
         <div class="error-message">
         <?= session()->getFlashdata('error'); ?>
       </div>
     <?php endif; ?>
-    
-    <!-- Add Item Section -->
-    <div class="add-item-section">
-        <form action="<?= base_url('user/keranjang/tambah') ?>" method="post" class="add-item-form">
-            <?= csrf_field() ?>
-            <div class="form-group">
-                <label for="nama_obat">Nama Obat:</label>
-                <select class="form-control" id="nama_obat" name="nama_obat" required>
-                    <option value="">Pilih Obat</option>
-                    <?php foreach ($daftar_obat as $obat): ?>
-                        <option value="<?= $obat['nama_obat'] ?>"><?= $obat['nama_obat'] ?></option>
-                    <?php endforeach; ?>
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="jumlah">Jumlah:</label>
-                <input type="number" class="form-control" id="jumlah" name="jumlah" min="1" required>
-            </div>
-            <button type="submit" class="btn-add">Tambah</button>
-        </form>
-    </div>
-    
+
     <div class="cart-layout">
         <!-- Cart Items -->
         <div class="cart-items">
@@ -452,7 +440,6 @@
                 <?php endforeach; ?>
             <?php else: ?>
                 <div class="empty-cart">
-                    <div class="icon"></div>
                     <h3>Keranjang Anda kosong</h3>
                     <p>Silakan tambahkan obat ke keranjang terlebih dahulu</p>
                 </div>

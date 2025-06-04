@@ -12,6 +12,16 @@
   margin-bottom: 1rem;
   font-size: 0.875rem;
 }
+
+    .success-message {
+    background-color: #f8d7da;
+    border: 1px solid #f5c6cb;
+    color:rgb(44, 140, 31);
+    padding: 10px 15px;
+    border-radius: 10px;
+    margin-bottom: 1rem;
+    font-size: 0.875rem;
+    }
 </style>
   <div class="wrapper">
     <header>Buat Akun</header>

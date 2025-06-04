@@ -16,6 +16,16 @@
   margin-bottom: 1rem;
   font-size: 0.875rem;
 }
+
+    .success-message {
+      background-color: #d4edda;
+      border: 1px solid #c3e6cb;
+      color: #155724;
+      padding: 10px 15px;
+      border-radius: 10px;
+      margin-bottom: 1rem;
+      font-size: 0.875rem;
+    }
 </style>
 </style>
   <div class="wrapper">
@@ -25,6 +35,11 @@
           <?= session()->getFlashdata('error'); ?>
       </div>
     <?php endif; ?>
+                <?php if(session()->getFlashdata('success')): ?>
+                  <div class="success-message">
+                  <?= session()->getFlashdata('success'); ?>
+              </div>
+            <?php endif; ?>
     <form action="<?= base_url('login/cek') ?>" method="post">
       <div class="field email">
         <div class="input-area">

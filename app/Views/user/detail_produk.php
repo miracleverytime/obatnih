@@ -53,6 +53,27 @@
         max-width: 300px;
       }
     }
+
+      .error-message {
+      background-color: #f8d7da;
+      border: 1px solid #f5c6cb;
+      color: #721c24;
+      padding: 10px 15px;
+      border-radius: 10px;
+      margin-bottom: 1rem;
+      font-size: 0.875rem;
+    }
+
+    .success-message {
+      background-color: #d4edda;
+      border: 1px solid #c3e6cb;
+      color: #155724;
+      padding: 10px 15px;
+      border-radius: 10px;
+      margin-bottom: 1rem;
+      font-size: 0.875rem;
+    }
+
   </style>
 </head>
 <body>
@@ -74,15 +95,25 @@
              class="img-fluid h-100" 
              style="object-fit: contain; border-radius: 8px; padding: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1);" 
              alt="<?= esc($obat['nama_obat']) ?>">
-      </div>
-    </div>
+            </div>
+       </div>
+       
 
     <!-- Info Produk -->
     <div class="col-md-6 d-flex flex-column justify-content-between">
       <?php if (isset($obat) && $obat): ?>
         <div>
           <h2><?= esc($obat['nama_obat']) ?></h2>
-
+            <?php if(session()->getFlashdata('success')): ?>
+                  <div class="success-message">
+                  <?= session()->getFlashdata('success'); ?>
+              </div>
+            <?php endif; ?>
+            <?php if(session()->getFlashdata('error')): ?>
+                  <div class="error-message">
+                  <?= session()->getFlashdata('error'); ?>
+              </div>
+            <?php endif; ?>
           <!-- Status Stok -->
           <div class="mb-3">
             <?php if($obat['stok'] > 0): ?>
@@ -111,10 +142,10 @@
         <!-- Form Tambahkan ke Keranjang -->
         <div class="mt-4">
           <?php if($obat['stok'] > 0): ?>
-            <form action="<?= base_url('keranjang/tambah') ?>" method="post" class="d-grid gap-2">
+            <form action="<?= base_url('user/keranjang/tambah') ?>" method="post" class="d-grid gap-2">
               <input type="hidden" name="id_obat" value="<?= $obat['id_obat'] ?>">
               <label for="jumlah" class="form-label">Jumlah:</label>
-              <input type="number" name="jumlah" id="jumlah" value="1" min="1" max="<?= $obat['stok'] ?>" class="form-control mb-2" required>
+              <input type="number" name="jumlah" id="jumlah" value="1" class="form-control mb-2">
 
               <button type="submit" class="btn btn-primary w-100">
                 <i class="fas fa-shopping-cart"></i> Tambahkan ke Keranjang
