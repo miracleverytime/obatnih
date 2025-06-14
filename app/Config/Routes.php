@@ -45,6 +45,9 @@ $routes->group('user', ['filter' => 'auth:user'], function ($routes) {
     $routes->post('keranjang/bayar/(:num)', 'KeranjangController::bayar/$1');
     $routes->get('keranjang/edit/(:num)', 'KeranjangController::edit/$1');
     $routes->get('keranjang/update/(:num)', 'KeranjangController::update/$1');
+    $routes->get('profil', 'UserController::profil');
+    $routes->post('profil/update/(:num)', 'UserController::updateProfil/$1');
+    $routes->get('riwayat', 'UserController::riwayat');
 
 });
 

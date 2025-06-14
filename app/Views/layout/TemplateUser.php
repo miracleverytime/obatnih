@@ -56,9 +56,9 @@
   </form>
   <ul class="navbar-nav ms-auto">
     <li class="nav-item"><a class="nav-link" href="<?= base_url('user/katalog') ?>">Home</a></li>
-    <li class="nav-item"><a class="nav-link" href="<?= base_url('user/katalog') ?>">Profile</a></li>
-    <li class="nav-item"><a class="nav-link" href="<?= base_url('user/katalog') ?>">Riwayat</a></li>
-    <li class="nav-item"><a class="nav-link" href="<?= base_url('user/katalog') ?>">Bantuan</a></li>
+    <li class="nav-item"><a class="nav-link" href="<?= base_url('user/profil') ?>">Profile</a></li>
+    <li class="nav-item"><a class="nav-link" href="<?= base_url('user/riwayat') ?>">Riwayat</a></li>
+    <li class="nav-item"><a class="nav-link" href="<?= base_url('user/bantuan') ?>">Bantuan</a></li>
     <li class="nav-item">
       <a class="btn btn-dark" href="<?= base_url('user/keranjang') ?>"><i class="fa fa-shopping-cart"></i> Keranjang</a>
     </li>
