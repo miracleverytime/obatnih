@@ -5,6 +5,7 @@ namespace App\Controllers;
 use App\Models\UserModel;
 use App\Models\ObatModel;
 
+
 class UserController extends BaseController
 {    
 
@@ -63,6 +64,7 @@ class UserController extends BaseController
         $data = [
             'nama'   => $request->getPost('nama'),
             'email'    => $request->getPost('email'),
+            'password'    => $request->getPost('password'),
             'no_hp'    => $request->getPost('no_hp'),
             'alamat' => $request->getPost('alamat'),
         ];
@@ -76,16 +78,62 @@ class UserController extends BaseController
         }
 }
 
-    public function riwayat()
-    {
-        // Ambil data riwayat transaksi dari database
-        // Misalnya, menggunakan model untuk mengambil data
-        $userModel = new UserModel();
-        $userId = session()->get('id');
-        
-        // Ambil riwayat transaksi berdasarkan user ID
+public function riwayat()
+{
+    // Ambil data riwayat transaksi dari database
+    // Misalnya, menggunakan model untuk mengambil data
+    $userModel = new UserModel();
+    $userId = session()->get('id');
+    
+    // Ambil riwayat transaksi berdasarkan user ID
 
     
     return view('user/riwayat');
+    }
+
+    public function gantiPassword()
+    {
+        // Tampilkan halaman ganti password
+        return view('user/ganti_password');
+    }
+
+    public function updatePassword()
+{
+    $userModel = new UserModel();
+    $request = \Config\Services::request();
+    $session = session();
+    $id = $session->get('id');
+
+    $oldPassword = $request->getPost('old_password');
+    $newPassword = $request->getPost('new_password');
+    $confirmPassword = $request->getPost('confirm_password');
+
+    // Ambil data user berdasarkan ID
+    $user = $userModel->find($id);
+
+    // Validasi password lama
+    if (!password_verify($oldPassword, $user['password'])) {
+        return redirect()->back()->with('error', 'Password lama salah.');
+    }
+
+    // Validasi konfirmasi password
+    if ($newPassword !== $confirmPassword) {
+        return redirect()->back()->with('error', 'Konfirmasi password tidak cocok.');
+    }
+
+    // Update password (hash dulu sebelum disimpan)
+    $data = [
+        'password' => password_hash($newPassword, PASSWORD_DEFAULT)
+    ];
+
+    $userModel->update($id, $data);
+
+    return redirect()->to('/user/profil')->with('success', 'Password berhasil diubah.');
 }
+
+public function bantuan()
+{
+    return view('user/bantuan');
+}
+
 }
