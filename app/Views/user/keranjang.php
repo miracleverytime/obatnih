@@ -209,16 +209,56 @@
         display: flex;
         align-items: center;
         margin: 0 1rem;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        overflow: hidden;
+        background-color: white;
     }
     
-    .quantity-display {
+    .quantity-btn {
+        width: 35px;
+        height: 35px;
+        border: none;
         background-color: #f8f9fa;
-        border: 1px solid #dee2e6;
-        padding: 8px 12px;
-        border-radius: 6px;
-        min-width: 80px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 18px;
+        color: #666;
+        transition: all 0.2s;
+    }
+    
+    .quantity-btn:hover {
+        background-color: #e9ecef;
+        color: #333;
+    }
+    
+    .quantity-btn:disabled {
+        background-color: #f8f9fa;
+        color: #ccc;
+        cursor: not-allowed;
+    }
+    
+    .quantity-input {
+        width: 50px;
+        height: 35px;
+        border: none;
         text-align: center;
         font-weight: 500;
+        outline: none;
+        background-color: white;
+        font-size: 14px;
+    }
+    
+    .quantity-input::-webkit-outer-spin-button,
+    .quantity-input::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+    
+    .quantity-input[type=number] {
+        appearance: textfield;
     }
     
     .item-actions {
@@ -336,6 +376,11 @@
         margin: 0 auto 1rem;
     }
     
+    .loading {
+        opacity: 0.6;
+        pointer-events: none;
+    }
+    
     @media (max-width: 768px) {
         .navbar-custom {
             padding: 1rem;
@@ -370,34 +415,31 @@
     }
 
     .error-message {
-    background-color: #f8d7da;
-    border: 1px solid #f5c6cb;
-    color: #721c24;
-    padding: 10px 15px;
-    border-radius: 10px;
-    margin-bottom: 1rem;
-    font-size: 0.875rem;
+        background-color: #f8d7da;
+        border: 1px solid #f5c6cb;
+        color: #721c24;
+        padding: 10px 15px;
+        border-radius: 10px;
+        margin-bottom: 1rem;
+        font-size: 0.875rem;
     }
 
     .success-message {
-    background-color: #f8d7da;
-    border: 1px solid #f5c6cb;
-    color:rgb(44, 140, 31);
-    padding: 10px 15px;
-    border-radius: 10px;
-    margin-bottom: 1rem;
-    font-size: 0.875rem;
+        background-color: #d4edda;
+        border: 1px solid #c3e6cb;
+        color: #155724;
+        padding: 10px 15px;
+        border-radius: 10px;
+        margin-bottom: 1rem;
+        font-size: 0.875rem;
     }
 </style>
 
-<!-- Navigation Bar -->
-
-
 <div class="main-container">
-        <?php if(session()->getFlashdata('error')): ?>
+    <?php if(session()->getFlashdata('error')): ?>
         <div class="error-message">
-        <?= session()->getFlashdata('error'); ?>
-      </div>
+            <?= session()->getFlashdata('error'); ?>
+        </div>
     <?php endif; ?>
 
     <div class="cart-layout">
@@ -405,7 +447,7 @@
         <div class="cart-items">
             <?php if (count($keranjang) > 0): ?>
                 <?php foreach ($keranjang as $item): ?>
-                    <div class="cart-item">
+                    <div class="cart-item" data-item-id="<?= $item['id'] ?>">
                         <div class="product-image">
                         <?php 
                             $gambar = !empty($item['gambar_obat']) ? $item['gambar_obat'] : 'default.jpg'; 
@@ -416,19 +458,25 @@
                             <div class="product-name"><?= esc($item['nama_obat']) ?></div>
                             <div class="product-description"><?= esc($item['deskripsi']) ?></div>
                             <div class="product-price">
-                                Rp <?= number_format($item['harga_satuan'], 0, ',', '.') ?> x <?= $item['jumlah'] ?> = 
-                                Rp <?= number_format($item['harga_satuan'] * $item['jumlah'], 0, ',', '.') ?>
+                                <span class="price-per-unit">Rp <?= number_format($item['harga_satuan'], 0, ',', '.') ?></span> x 
+                                <span class="quantity-display"><?= $item['jumlah'] ?></span> = 
+                                <span class="total-price">Rp <?= number_format($item['harga_satuan'] * $item['jumlah'], 0, ',', '.') ?></span>
                             </div>
                         </div>
                         
                         <div class="quantity-section">
-                            <div class="quantity-display"><?= $item['jumlah'] ?> pcs</div>
+                            <button class="quantity-btn decrease-btn" data-item-id="<?= $item['id'] ?>" data-price="<?= $item['harga_satuan'] ?>">−</button>
+                            <input type="number" 
+                                   class="quantity-input" 
+                                   value="<?= $item['jumlah'] ?>" 
+                                   min="1" 
+                                   max="99"
+                                   data-item-id="<?= $item['id'] ?>"
+                                   data-price="<?= $item['harga_satuan'] ?>">
+                            <button class="quantity-btn increase-btn" data-item-id="<?= $item['id'] ?>" data-price="<?= $item['harga_satuan'] ?>">+</button>
                         </div>
                         
                         <div class="item-actions">
-                            <a href="<?= base_url('user/keranjang/edit/' . $item['id']) ?>" class="action-btn btn-edit" title="Edit">
-                                📝
-                            </a>
                             <a href="<?= base_url('user/keranjang/hapus/' . $item['id']) ?>" 
                                class="action-btn btn-delete" 
                                title="Hapus"
@@ -451,7 +499,7 @@
             <div class="cart-summary">
                 <div class="summary-row">
                     <span>SUBTOTAL</span>
-                    <span>Rp <?= number_format($subtotal, 0, ',', '.') ?></span>
+                    <span id="subtotal-display">Rp <?= number_format($subtotal, 0, ',', '.') ?></span>
                 </div>
                 <div class="summary-row">
                     <span>PENGIRIMAN</span>
@@ -463,7 +511,7 @@
                 </div>
                 <div class="summary-total">
                     <span>TOTAL</span>
-                    <span>Rp <?= number_format($subtotal, 0, ',', '.') ?></span>
+                    <span id="total-display">Rp <?= number_format($subtotal, 0, ',', '.') ?></span>
                 </div>
 
                 <form action="<?= base_url('user/keranjang/checkout') ?>" method="post">

@@ -5,7 +5,6 @@ namespace App\Controllers;
 use App\Models\UserModel;
 use App\Models\ObatModel;
 
-
 class UserController extends BaseController
 {    
 
@@ -64,7 +63,6 @@ class UserController extends BaseController
         $data = [
             'nama'   => $request->getPost('nama'),
             'email'    => $request->getPost('email'),
-            'password'    => $request->getPost('password'),
             'no_hp'    => $request->getPost('no_hp'),
             'alamat' => $request->getPost('alamat'),
         ];
@@ -78,16 +76,18 @@ class UserController extends BaseController
         }
 }
 
-public function riwayat()
-{
-    // Ambil data riwayat transaksi dari database
-    // Misalnya, menggunakan model untuk mengambil data
-    $userModel = new UserModel();
-    $userId = session()->get('id');
-    
-    // Ambil riwayat transaksi berdasarkan user ID
+    public function riwayat()
+    {
+        // Ambil data riwayat transaksi dari database
+        // Misalnya, menggunakan model untuk mengambil data
+        $userModel = new UserModel();
+        $userId = session()->get('id');
+        
+        // Ambil riwayat transaksi berdasarkan user ID
 
-    
-    return view('user/riwayat');
-}
+        
+        return view('user/riwayat');
+    }
+
+        
 }
