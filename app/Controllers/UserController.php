@@ -85,9 +85,7 @@ class UserController extends BaseController
         
         // Ambil riwayat transaksi berdasarkan user ID
 
-        
-        return view('user/riwayat');
-    }
-
-        
+    
+    return view('user/riwayat');
+}
 }
