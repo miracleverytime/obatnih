@@ -87,6 +87,15 @@
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
 
+        .sidebar {
+            flex: 1;
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            height: fit-content;
+        }
+
         .profile-title {
             font-size: 24px;
             color: #333;
@@ -132,41 +141,6 @@
             gap: 15px;
         }
 
-        .sidebar {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-
-        .sidebar-btn {
-            padding: 12px 20px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 14px;
-            transition: background-color 0.3s;
-            width: 100%;
-        }
-
-        .btn-primary {
-            background-color: #666;
-            color: white;
-        }
-
-        .btn-primary:hover {
-            background-color: #555;
-        }
-
-        .btn-secondary {
-            background-color: #999;
-            color: white;
-        }
-
-        .btn-secondary:hover {
-            background-color: #777;
-        }
-
         .btn-save {
             background-color: #666;
             color: white;
@@ -180,6 +154,58 @@
 
         .btn-save:hover {
             background-color: #555;
+        }
+
+        .sidebar-btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s;
+            width: 100%;
+            margin-top: 30px;
+        }
+
+        .btn-primary {
+            background-color: #666;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #555;
+        }
+
+        .error-message {
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+            padding: 10px 15px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            font-size: 0.875rem;
+        }
+
+        .success-message {
+            background-color: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+            padding: 10px 15px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            font-size: 0.875rem;
+        }
+
+        .password-form {
+            margin-bottom: 30px;
+        }
+
+        .password-form .form-row {
+            margin-bottom: 15px;
+        }
+
+        .password-form .form-buttons {
+            margin-top: 20px;
         }
 
         @media (max-width: 768px) {
@@ -199,6 +225,10 @@
 
             .form-buttons {
                 flex-direction: column;
+            }
+            
+            .sidebar {
+                order: -1;
             }
         }
     </style>
@@ -241,7 +271,46 @@
         </div>
 
         <div class="sidebar">
-            <button class="sidebar-btn btn-primary" type="button" onclick="gantiPassword()">Ganti Password</button>
+            <h1 class="profile-title">Ganti Password</h1>
+            
+            <?php if(session()->getFlashdata('success')): ?>
+                <div class="success-message">
+                    <?= session()->getFlashdata('success'); ?>
+                </div>
+            <?php endif; ?>
+            
+            <?php if(session()->getFlashdata('error')): ?>
+                <div class="error-message">
+                    <?= session()->getFlashdata('error'); ?>
+                </div>
+            <?php endif; ?>
+
+            <div class="password-form">
+                <form method="post" action="<?= base_url('/user/profil/update-password') ?>">
+                    <div class="form-row">
+                        <div class="form-group full-width">
+                            <input type="password" class="form-input" placeholder="Password Lama" name="old_password" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group full-width">
+                            <input type="password" class="form-input" placeholder="Password Baru" name="new_password" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group full-width">
+                            <input type="password" class="form-input" placeholder="Konfirmasi Password Baru" name="confirm_password" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-buttons">
+                        <button class="btn-save" type="submit">Simpan</button>
+                    </div>
+                </form>
+            </div>
+
             <button class="sidebar-btn btn-primary" type="button" onclick="logout()">Logout</button>
         </div>
     </div>
@@ -259,11 +328,6 @@
                 this.style.borderColor = '#ddd';
             });
         });
-
-        // Event listener untuk tombol
-        function gantiPassword() {
-            alert('Fitur ganti password akan segera tersedia');
-        }
 
         function logout() {
             if(confirm('Apakah Anda yakin ingin logout?')) {

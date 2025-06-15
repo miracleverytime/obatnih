@@ -49,6 +49,9 @@ $routes->group('user', ['filter' => 'auth:user'], function ($routes) {
     $routes->get('profil', 'UserController::profil');
     $routes->post('profil/update', 'UserController::updateProfil');
     $routes->get('riwayat', 'UserController::riwayat');
+    $routes->get('profil/ganti-password', 'UserController::gantiPassword');
+    $routes->post('profil/update-password', 'UserController::updatePassword');
+    $routes->get('profil/bantuan', 'UserController::bantuan');
 
 });
 
