@@ -434,7 +434,7 @@
         font-size: 0.875rem;
     }
 </style>
-
+<main>
 <div class="main-container">
     <?php if(session()->getFlashdata('error')): ?>
         <div class="error-message">
@@ -470,7 +470,7 @@
                                    class="quantity-input" 
                                    value="<?= $item['jumlah'] ?>" 
                                    min="1" 
-                                   max="99"
+                                   max="99999"
                                    data-item-id="<?= $item['id'] ?>"
                                    data-price="<?= $item['harga_satuan'] ?>">
                             <button class="quantity-btn increase-btn" data-item-id="<?= $item['id'] ?>" data-price="<?= $item['harga_satuan'] ?>">+</button>
@@ -523,5 +523,253 @@
         <?php endif; ?>
     </div>
 </div>
+</main>
 
+<script>
+// Definisi variabel global yang diperlukan
+const baseUrl = '<?= base_url() ?>';
+const csrfToken = '<?= csrf_token() ?>';
+const csrfHash = '<?= csrf_hash() ?>';
+
+// Script untuk menangani perubahan quantity di keranjang
+document.addEventListener('DOMContentLoaded', function() {
+    // Function untuk format rupiah
+    function formatRupiah(angka) {
+        return new Intl.NumberFormat('id-ID', {
+            style: 'currency',
+            currency: 'IDR',
+            minimumFractionDigits: 0,
+            maximumFractionDigits: 0
+        }).format(angka).replace('IDR', 'Rp');
+    }
+
+    // Function untuk update quantity
+    function updateQuantity(itemId, newQuantity) {
+        // Disable semua tombol sementara
+        const buttons = document.querySelectorAll('.quantity-btn');
+        const inputs = document.querySelectorAll('.quantity-input');
+        
+        buttons.forEach(btn => btn.disabled = true);
+        inputs.forEach(input => input.disabled = true);
+
+        // Tampilkan loading state
+        const cartItem = document.querySelector(`[data-item-id="${itemId}"]`);
+        cartItem.classList.add('loading');
+
+        // Siapkan data untuk dikirim
+        const formData = new FormData();
+        formData.append('id', itemId);
+        formData.append('jumlah', newQuantity);
+        formData.append(csrfToken, csrfHash);
+
+        // Kirim request AJAX
+        fetch(baseUrl + 'user/keranjang/updateQuantity', {
+            method: 'POST',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: formData
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.success) {
+                // Update tampilan quantity
+                const quantityDisplay = cartItem.querySelector('.quantity-display');
+                const totalPriceDisplay = cartItem.querySelector('.total-price');
+                const quantityInput = cartItem.querySelector('.quantity-input');
+                
+                quantityDisplay.textContent = data.data.jumlah;
+                quantityInput.value = data.data.jumlah;
+                totalPriceDisplay.textContent = formatRupiah(data.data.total_item);
+
+                // Update subtotal dan total
+                document.getElementById('subtotal-display').textContent = formatRupiah(data.data.subtotal);
+                document.getElementById('total-display').textContent = formatRupiah(data.data.subtotal);
+
+                // Update tombol decrease state
+                const decreaseBtn = cartItem.querySelector('.decrease-btn');
+                decreaseBtn.disabled = data.data.jumlah <= 1;
+
+            } else {
+                // Tampilkan pesan error
+                showMessage(data.message, 'error');
+                
+                // Kembalikan nilai input ke nilai sebelumnya
+                const quantityInput = cartItem.querySelector('.quantity-input');
+                quantityInput.value = quantityInput.dataset.originalValue || 1;
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showMessage('Terjadi kesalahan. Silakan coba lagi.', 'error');
+            
+            // Kembalikan nilai input ke nilai sebelumnya
+            const quantityInput = cartItem.querySelector('.quantity-input');
+            quantityInput.value = quantityInput.dataset.originalValue || 1;
+        })
+        .finally(() => {
+            // Enable kembali semua tombol
+            buttons.forEach(btn => btn.disabled = false);
+            inputs.forEach(input => input.disabled = false);
+            
+            // Update disable state untuk tombol decrease
+            document.querySelectorAll('.quantity-input').forEach(input => {
+                const itemId = input.dataset.itemId;
+                const decreaseBtn = document.querySelector(`.decrease-btn[data-item-id="${itemId}"]`);
+                if (parseInt(input.value) <= 1) {
+                    decreaseBtn.disabled = true;
+                } else {
+                    decreaseBtn.disabled = false;
+                }
+            });
+            
+            // Hilangkan loading state
+            cartItem.classList.remove('loading');
+        });
+    }
+
+    // Function untuk menampilkan pesan
+    function showMessage(message, type) {
+        // Hapus pesan sebelumnya jika ada
+        const existingMessage = document.querySelector('.alert-message');
+        if (existingMessage) {
+            existingMessage.remove();
+        }
+
+        // Buat elemen pesan baru
+        const messageDiv = document.createElement('div');
+        messageDiv.className = `alert-message ${type === 'success' ? 'success-message' : 'error-message'}`;
+        messageDiv.textContent = message;
+
+        // Tambahkan ke halaman
+        const mainContainer = document.querySelector('.main-container');
+        mainContainer.insertBefore(messageDiv, mainContainer.firstChild);
+
+        // Hilangkan pesan 
+        setTimeout(() => {
+            if (messageDiv.parentNode) {
+                messageDiv.remove();
+            }
+        }, 2500);
+    }
+
+    // Event listener untuk tombol decrease
+    document.addEventListener('click', function(e) {
+        if (e.target.classList.contains('decrease-btn')) {
+            e.preventDefault();
+            
+            const itemId = e.target.dataset.itemId;
+            const quantityInput = document.querySelector(`input[data-item-id="${itemId}"]`);
+            const currentQuantity = parseInt(quantityInput.value);
+            
+            if (currentQuantity > 1) {
+                const newQuantity = currentQuantity - 1;
+                quantityInput.dataset.originalValue = currentQuantity;
+                updateQuantity(itemId, newQuantity);
+            }
+        }
+    });
+
+    // Event listener untuk tombol increase
+    document.addEventListener('click', function(e) {
+        if (e.target.classList.contains('increase-btn')) {
+            e.preventDefault();
+            
+            const itemId = e.target.dataset.itemId;
+            const quantityInput = document.querySelector(`input[data-item-id="${itemId}"]`);
+            const currentQuantity = parseInt(quantityInput.value);
+            
+            if (currentQuantity < 99999) {
+                const newQuantity = currentQuantity + 1;
+                quantityInput.dataset.originalValue = currentQuantity;
+                updateQuantity(itemId, newQuantity);
+            } else {
+                showMessage('Quantity maksimal adalah 99999', 'error');
+            }
+        }
+    });
+
+    // Event listener untuk input quantity langsung
+    document.addEventListener('change', function(e) {
+        if (e.target.classList.contains('quantity-input')) {
+            const itemId = e.target.dataset.itemId;
+            const newQuantity = parseInt(e.target.value);
+            const originalValue = parseInt(e.target.dataset.originalValue) || 1;
+            
+            // Validasi input
+            if (isNaN(newQuantity) || newQuantity < 1) {
+                e.target.value = originalValue;
+                showMessage('Quantity minimal adalah 1', 'error');
+                return;
+            }
+            
+            if (newQuantity > 99999) {
+                e.target.value = originalValue;
+                showMessage('Quantity maksimal adalah 99999', 'error');
+                return;
+            }
+
+            // Jika nilai tidak berubah, tidak perlu update
+            if (newQuantity === originalValue) {
+                return;
+            }
+
+            // Simpan nilai original untuk rollback jika gagal
+            e.target.dataset.originalValue = originalValue;
+            updateQuantity(itemId, newQuantity);
+        }
+    });
+
+    // Event listener untuk focus pada input quantity (simpan nilai original)
+    document.addEventListener('focus', function(e) {
+        if (e.target.classList.contains('quantity-input')) {
+            e.target.dataset.originalValue = e.target.value;
+        }
+    }, true);
+
+    // Set nilai original untuk semua input quantity saat halaman dimuat
+    document.querySelectorAll('.quantity-input').forEach(input => {
+        input.dataset.originalValue = input.value;
+    });
+
+    // Disable tombol decrease untuk quantity = 1 saat halaman dimuat
+    document.querySelectorAll('.quantity-input').forEach(input => {
+        const itemId = input.dataset.itemId;
+        const decreaseBtn = document.querySelector(`.decrease-btn[data-item-id="${itemId}"]`);
+        if (parseInt(input.value) <= 1) {
+            decreaseBtn.disabled = true;
+        }
+    });
+
+    // Validasi input hanya angka
+    document.addEventListener('keypress', function(e) {
+        if (e.target.classList.contains('quantity-input')) {
+            // Hanya izinkan angka
+            if (!/[0-9]/.test(e.key) && !['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'Tab'].includes(e.key)) {
+                e.preventDefault();
+            }
+        }
+    });
+
+    // Prevent paste non-numeric content
+    document.addEventListener('paste', function(e) {
+        if (e.target.classList.contains('quantity-input')) {
+            e.preventDefault();
+            const paste = (e.clipboardData || window.clipboardData).getData('text');
+            if (/^\d+$/.test(paste)) {
+                const value = parseInt(paste);
+                if (value >= 1 && value <= 99999) {
+                    e.target.value = value;
+                    e.target.dispatchEvent(new Event('change'));
+                }
+            }
+        }
+    });
+});
+</script>
 <?= $this->endSection(); ?>
