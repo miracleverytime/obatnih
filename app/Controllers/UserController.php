@@ -131,4 +131,9 @@ public function riwayat()
     return redirect()->to('/user/profil')->with('success', 'Password berhasil diubah.');
 }
 
+public function bantuan()
+{
+    return view('user/bantuan');
+}
+
 }
