@@ -8,6 +8,7 @@ use CodeIgniter\Router\RouteCollection;
 $routes->get('/', 'Home::index');
 $routes->get('/index', 'Home::index');
 $routes->get('/login', 'LoginController::loginForm');
+$routes->get('/logout', 'LoginController::loginForm');
 $routes->get('/signup', 'Home::register');
 $routes->get('/forgot', 'Home::lupapassword');
 $routes->post('/login/cek', 'LoginController::login');
@@ -46,7 +47,7 @@ $routes->group('user', ['filter' => 'auth:user'], function ($routes) {
     $routes->get('keranjang/edit/(:num)', 'KeranjangController::edit/$1');
     $routes->get('keranjang/update/(:num)', 'KeranjangController::update/$1');
     $routes->get('profil', 'UserController::profil');
-    $routes->post('profil/update/(:num)', 'UserController::updateProfil/$1');
+    $routes->post('profil/update', 'UserController::updateProfil');
     $routes->get('riwayat', 'UserController::riwayat');
 
 });

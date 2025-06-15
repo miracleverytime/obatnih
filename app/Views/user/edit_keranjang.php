@@ -2,7 +2,7 @@
 
 <?= $this->section('content'); ?>
 <div class="container">
-    <div class="row">
+    <div class="row"> 
         <div class="col">
             <h3>Edit Obat di Keranjang</h3>
             <form action="<?= base_url('user/keranjang/update/' . $item['id']) ?>" method="post">

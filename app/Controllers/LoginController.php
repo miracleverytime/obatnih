@@ -45,6 +45,8 @@ public function login()
                 session()->set([
                     'id'      => $user['id'],
                     'email'   => $user['email'],
+                    'alamat'   => $user['alamat'],
+                    'no_hp'   => $user['no_hp'],
                     'nama'    => $user['nama'] ?? '',
                     'role'    => $role,
                     'isLogin' => true,

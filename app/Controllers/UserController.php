@@ -54,29 +54,28 @@ class UserController extends BaseController
 }
 
 
-    public function updateProfil($id)
+    public function updateProfil()
 {
-    $userModel = new UserModel();
-    $userId = session()->get('id');
+        $userModel = new UserModel();
 
-    // Ambil input dari form
-    $nama = $this->request->getPost('nama');
-    $nama_akhir = $this->request->getPost('nama_akhir'); // jika ada
-    $alamat = $this->request->getPost('alamat');
+        $request = \Config\Services::request();
+        $id = session()->get('id'); 
 
-    // Validasi sederhana (opsional)
-    if (empty($nama)) {
-        return redirect()->back()->with('error', 'Nama tidak boleh kosong.');
-    }
+        $data = [
+            'nama'   => $request->getPost('nama'),
+            'email'    => $request->getPost('email'),
+            'password'    => $request->getPost('password'),
+            'no_hp'    => $request->getPost('no_hp'),
+            'alamat' => $request->getPost('alamat'),
+        ];
 
-    // Update data user
-    $userModel->update($userId, [
-        'nama' => $nama,
-        'nama_akhir' => $nama_akhir, // jika field ini ada di DB
-        'alamat' => $alamat,
-    ]);
 
-    return redirect()->to('/user/profil')->with('success', 'Profil berhasil diperbarui.');
+        if (!empty(array_filter($data))) {
+            $userModel->update($id, $data);
+            return redirect()->to('/user/profil')->with('success', 'Data berhasil diperbarui.');
+        } else {
+            return redirect()->back()->with('error', 'Tidak ada data yang dikirim.');
+        }
 }
 
 public function riwayat()

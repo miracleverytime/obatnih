@@ -73,7 +73,7 @@
 
 <!-- Footer -->
 <footer>
-  <div class="container">
+  <div class="containerr">
     <small>&copy; <?= date('Y') ?> ObatNih — Kelompok 4</small>
   </div>
 </footer>

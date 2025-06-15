@@ -43,14 +43,6 @@
             justify-content: center;
         }
 
-        .search-bar {
-            padding: 8px 15px;
-            border: 1px solid #ddd;
-            border-radius: 20px;
-            width: 250px;
-            outline: none;
-        }
-
         .nav-menu {
             display: flex;
             gap: 20px;
@@ -80,7 +72,7 @@
         }
 
         .container {
-            max-width: 1000px;
+            max-width: 1210px;
             margin: 40px auto;
             padding: 0 20px;
             display: flex;
@@ -134,6 +126,12 @@
             color: #999;
         }
 
+        .form-buttons {
+            margin-top: 30px;
+            display: flex;
+            gap: 15px;
+        }
+
         .sidebar {
             flex: 1;
             display: flex;
@@ -148,6 +146,7 @@
             cursor: pointer;
             font-size: 14px;
             transition: background-color 0.3s;
+            width: 100%;
         }
 
         .btn-primary {
@@ -168,6 +167,21 @@
             background-color: #777;
         }
 
+        .btn-save {
+            background-color: #666;
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s;
+        }
+
+        .btn-save:hover {
+            background-color: #555;
+        }
+
         @media (max-width: 768px) {
             .container {
                 flex-direction: column;
@@ -182,15 +196,20 @@
             .nav-menu {
                 display: none;
             }
+
+            .form-buttons {
+                flex-direction: column;
+            }
         }
     </style>
 </head>
 <body>
+    <main>
     <div class="container">
         <div class="profile-form">
             <h1 class="profile-title">Profile Pengguna</h1>
             
-            <form method="post" action="<?= base_url('/user/profil/update/'.$user['id']) ?>">
+            <form method="post" action="<?= base_url('/user/profil/update') ?>">
                 <div class="form-row">
                     <div class="form-group">
                         <input type="text" class="form-input" placeholder="Nama awal" name="nama" value="<?= $user['nama'] ?>">
@@ -205,25 +224,29 @@
                 
                 <div class="form-row">
                     <div class="form-group full-width">
-                        <input type="email" class="form-input" placeholder="Email"  name="email" value="<?= $user['email'] ?>">
+                        <input type="email" class="form-input" placeholder="Email" name="email" value="<?= $user['email'] ?>">
                     </div>
                 </div>
                 
                 <div class="form-row">
                     <div class="form-group full-width">
-                        <input type="tel" class="form-input" placeholder="No HP" value="<?= $user['no_hp'] ?>">
+                        <input type="tel" class="form-input" placeholder="No HP" name="no_hp" value="<?= $user['no_hp'] ?>">
                     </div>
                 </div>
-        
-        <div class="sidebar">
-            <button class="sidebar-btn btn-primary" type="submit">Simpan</button>
-            <button class="sidebar-btn btn-primary">Ganti Password</button>
-            <button class="sidebar-btn btn-secondary">Logout</button>
-        </div>
-    </div>
-    </form>
+
+                <div class="form-buttons">
+                    <button class="btn-save" type="submit">Simpan</button>
+                </div>
+            </form>
         </div>
 
+        <div class="sidebar">
+            <button class="sidebar-btn btn-primary" type="button" onclick="gantiPassword()">Ganti Password</button>
+            <button class="sidebar-btn btn-primary" type="button" onclick="logout()">Logout</button>
+        </div>
+    </div>
+            
+    </main>
 
     <script>
         // Menambahkan interaktivitas sederhana
@@ -238,19 +261,16 @@
         });
 
         // Event listener untuk tombol
+        function gantiPassword() {
+            alert('Fitur ganti password akan segera tersedia');
+        }
 
-        document.querySelector('.btn-secondary').addEventListener('click', function() {
+        function logout() {
             if(confirm('Apakah Anda yakin ingin logout?')) {
-                alert('Logout berhasil');
+                // Redirect ke halaman logout
+                window.location.href = '<?= base_url('/logout') ?>';
             }
-        });
-
-        // Search functionality
-        document.querySelector('.search-bar').addEventListener('keypress', function(e) {
-            if(e.key === 'Enter') {
-                alert('Pencarian: ' + this.value);
-            }
-        });
+        }
     </script>
 </body>
 </html>
