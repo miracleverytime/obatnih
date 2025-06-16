@@ -35,6 +35,8 @@ $routes->group('admin', ['filter' => 'auth:admin'], function ($routes) {
 
 $routes->group('apoteker', ['filter' => 'auth:apoteker'], function ($routes) {
     $routes->get('validasi', 'ApotekerController::dashboard');
+    $routes->get('dashboard', 'ApotekerController::dashboard');
+    $routes->get('bantuan', 'ApotekerController::bantuan');
 });
 
 $routes->group('user', ['filter' => 'auth:user'], function ($routes) {
