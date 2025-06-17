@@ -6,6 +6,7 @@ use App\Controllers\BaseController;
 use App\Models\KeranjangModel;
 use App\Models\ObatModel;
 use App\Models\TransaksiModel;
+use App\Models\UserModel;
 use CodeIgniter\HTTP\ResponseInterface;
 
 class KeranjangController extends BaseController
@@ -403,5 +404,32 @@ private function hitungSubtotal()
         $keranjangModel->update($id, $data);
 
         return redirect()->to(base_url('user/keranjang'))->with('success', 'Data keranjang berhasil diperbarui.');
+    }
+
+    public function detailPengiriman()
+    {
+        $keranjangModel = new KeranjangModel();
+        $obatModel = new ObatModel();
+
+        $userModel = new UserModel();
+        $userId = session()->get('id');
+
+        // Ambil satu user berdasarkan ID
+        $data['user'] = $userModel->find($userId);
+
+        $keranjang = $keranjangModel
+            ->join('obat', 'obat.id_obat = keranjang.id_obat')
+            ->select('keranjang.*, obat.nama_obat, obat.harga_satuan, obat.gambar_obat')
+            ->findAll();
+
+        $subtotal = array_reduce($keranjang, function($carry, $item) {
+            return $carry + ($item['jumlah'] * $item['harga_satuan']);
+        }, 0);
+
+        return view('user/detail_pengiriman', [
+            'keranjang' => $keranjang,
+            'subtotal' => $subtotal,
+            'data' => $data,
+        ]);
     }
 }

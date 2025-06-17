@@ -514,7 +514,7 @@
                     <span id="total-display">Rp <?= number_format($subtotal, 0, ',', '.') ?></span>
                 </div>
 
-                <form action="<?= base_url('user/keranjang/checkout') ?>" method="post">
+                <form action="<?= base_url('user/keranjang/dpengiriman') ?>" method="post">
                     <?= csrf_field() ?>
                     <button type="submit" class="checkout-btn">Selanjutnya</button>
                 </form>

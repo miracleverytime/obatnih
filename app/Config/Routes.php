@@ -53,6 +53,7 @@ $routes->group('user', ['filter' => 'auth:user'], function ($routes) {
     $routes->post('profil/update-password', 'UserController::updatePassword');
     $routes->get('bantuan', 'UserController::bantuan');
     $routes->post('keranjang/updateQuantity', 'KeranjangController::updateQuantity');
+    $routes->post('keranjang/dpengiriman', 'KeranjangController::detailPengiriman');
 });
 
 $routes->get('/coba', 'KeranjangController::coba');
