@@ -1,81 +1,110 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8">
-  <title>ObatNih - Dashboard</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="csrf-token" content="<?= csrf_hash() ?>">
-  <!-- Bootstrap CSS -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <link rel="shortcut icon" type="image/icon" href="<?= base_url('assets/gambar/logoweb1.png') ?>"/>
-  <style>
-    html, body {
-      height: 100%;
-      margin: 0;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="au theme template">
+    <meta name="author" content="Hau Nguyen">
+    <meta name="keywords" content="au theme template">
 
-    body {
-      display: flex;
-      flex-direction: column;
-      min-height: 100vh;
-      font-family: 'Poppins', sans-serif;
-      background-color: #f9f9f9;
-    }
+    <title>ObatNih</title>
 
-    main {
-      flex: 1;
-    }
+    <!-- Favicon -->
+    <link rel="shortcut icon" href="<?= base_url('assets/gambar/logoweb1.png') ?>" type="image/icon">
 
-    .navbar-brand img {
-      height: 40px;
-    }
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="<?= base_url('/assets/css/fontawesome v6/css/all.min.css') ?>">
 
-    .card-title {
-      font-size: 14px;
-      margin-top: 10px;
-      color: #333;
-    }
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="<?= base_url('/assets/css/css2/bootstrap.min.css') ?>" media="all">
 
-    footer {
-      background: #f1f1f1;
-      padding: 10px 0;
-      text-align: center;
-    }
-  </style>
+    <!-- Main Theme CSS -->
+    <link rel="stylesheet" href="<?= base_url('/assets/css/theme.css') ?>" media="all">
 </head>
-<body>
 
-<!-- Header / Navbar -->
-<nav class="navbar navbar-expand-lg navbar-light bg-light px-4 py-2 shadow-sm">
-  <a class="navbar-brand d-flex align-items-center" href="#">
-    <img src="<?= base_url('/assets/gambar/logoweb1.png') ?>" alt="Logo" class="me-2">
-    <strong>ObatNih</strong>
-  </a>
-  <form class="d-flex mx-3" style="flex: 1; max-width: 400px;">
-    <input class="form-control me-2" type="search" placeholder="Cari..." aria-label="Search">
-  </form>
-  <ul class="navbar-nav ms-auto">
-    <li class="nav-item"><a class="nav-link" href="<?= base_url('apoteker/dashboard') ?>">Home</a></li>
-    <li class="nav-item"><a class="nav-link" href="<?= base_url('apoteker/bantuan') ?>">Bantuan</a></li>
-  </ul>
-</nav>
+<body class="animsition">
+    <div class="page-wrapper">
 
+        <!-- HEADER MOBILE -->
+        <header class="header-mobile d-block d-lg-none">
+            <div class="header-mobile__bar">
+                <div class="container-fluid">
+                    <div class="header-mobile-inner">
+                        <button class="hamburger hamburger--slider" type="button">
+                            <span class="hamburger-box">
+                                <span class="hamburger-inner"></span>
+                            </span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </header>
+        <!-- END HEADER MOBILE -->
 
+        <!-- MENU SIDEBAR -->
+        <aside class="menu-sidebar d-none d-lg-block">
+            <div class="logo text-center">
+                <h1 class="user" style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">Apoteker</h1>
+            </div>
+            <div class="menu-sidebar__content js-scrollbar1">
+                <nav class="navbar-sidebar">
+                    <ul class="list-unstyled navbar__list">
+                        <li>
+                            <a href="<?= base_url('apoteker/dashboard') ?>">
+                                <i class="fas fa-clipboard-check"></i> Konfirmasi Pembelian
+                            </a>
+                        </li>
+                        <li>
+                            <a href="<?= base_url('apoteker/bantuan') ?>">
+                                <i class="fas fa-circle-question"></i> Bantuan
+                            </a>
+                        </li>
+                        <li>
+                            <a href="<?= base_url('apoteker/logout') ?>">
+                                <i class="fas fa-arrow-right-from-bracket"></i> Logout
+                            </a>
+                        </li>
+                       
+                    </ul>
+                    <hr class="custom-hr">
+                </nav>
+            </div>
+        </aside>
+        <!-- END MENU SIDEBAR -->
+
+        <!-- PAGE CONTAINER -->
+        <div class="page-container">
+
+            <!-- HEADER DESKTOP -->
+            <header class="header-desktop">
+                <div class="section__content section__content--p30">
+                    <div class="container-fluid">
+                        <div class="header-wrap">
+                            <h1 style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">ObatNih</h1>
+                        </div>
+                    </div>
+                </div>
+            </header>
+            <!-- END HEADER DESKTOP -->
 
 <?= $this->renderSection('content'); ?>
 
 
+            <!-- FOOTER -->
+            <footer>
+                <div class="containerr text-center py-3">
+                    <small>&copy; <?= date('Y') ?> ObatNih — Kelompok 4</small>
+                </div>
+            </footer>
 
-<!-- Footer -->
-<footer>
-  <div class="containerr">
-    <small>&copy; <?= date('Y') ?> ObatNih — Kelompok 4</small>
-  </div>
-</footer>
+        </div>
+        <!-- END PAGE CONTAINER -->
 
-<!-- Bootstrap JS -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    </div>
 
+    <!-- Bootstrap Bundle JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
+
 </html>
