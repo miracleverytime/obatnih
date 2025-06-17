@@ -142,6 +142,7 @@
     $(document).ready(function() {
         $('#tableObat').DataTable();
         $('#tableStaff').DataTable();
+        $('#tableLaporan').DataTable();
     });
 </script>
 

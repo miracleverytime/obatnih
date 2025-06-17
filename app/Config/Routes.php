@@ -38,8 +38,9 @@ $routes->group('apoteker', ['filter' => 'auth:apoteker'], function ($routes) {
     $routes->get('dashboard', 'ApotekerController::dashboard');
     $routes->get('bantuan', 'ApotekerController::bantuan');
     $routes->get('logout',  'ApotekerController::logout');
-
-
+    $routes->get('dashboard', 'ApotekerController::dashboard');
+    $routes->get('validasi_transaksi/(:num)', 'ApotekerController::validasi_transaksi/$1');
+    $routes->get('batalkan_transaksi/(:num)', 'ApotekerController::batalkan_transaksi/$1');
 });
 
 $routes->group('user', ['filter' => 'auth:user'], function ($routes) {
@@ -54,7 +55,6 @@ $routes->group('user', ['filter' => 'auth:user'], function ($routes) {
     $routes->get('profil', 'UserController::profil');
     $routes->post('profil/update', 'UserController::updateProfil');
     $routes->get('riwayat', 'UserController::riwayat');
-    $routes->get('profil/ganti-password', 'UserController::gantiPassword');
     $routes->post('profil/update-password', 'UserController::updatePassword');
     $routes->get('bantuan', 'UserController::bantuan');
     $routes->post('keranjang/updateQuantity', 'KeranjangController::updateQuantity');

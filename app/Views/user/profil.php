@@ -238,6 +238,17 @@
     <div class="container">
         <div class="profile-form">
             <h1 class="profile-title">Profile Pengguna</h1>
+            <?php if(session()->getFlashdata('success')): ?>
+                <div class="success-message">
+                    <?= session()->getFlashdata('success'); ?>
+                </div>
+            <?php endif; ?>
+            
+            <?php if(session()->getFlashdata('error')): ?>
+                <div class="error-message">
+                    <?= session()->getFlashdata('error'); ?>
+                </div>
+            <?php endif; ?>
             
             <form method="post" action="<?= base_url('/user/profil/update') ?>">
                 <div class="form-row">
@@ -273,15 +284,15 @@
         <div class="sidebar">
             <h1 class="profile-title">Ganti Password</h1>
             
-            <?php if(session()->getFlashdata('success')): ?>
+            <?php if(session()->getFlashdata('successp')): ?>
                 <div class="success-message">
-                    <?= session()->getFlashdata('success'); ?>
+                    <?= session()->getFlashdata('successp'); ?>
                 </div>
             <?php endif; ?>
             
-            <?php if(session()->getFlashdata('error')): ?>
+            <?php if(session()->getFlashdata('errorp')): ?>
                 <div class="error-message">
-                    <?= session()->getFlashdata('error'); ?>
+                    <?= session()->getFlashdata('errorp'); ?>
                 </div>
             <?php endif; ?>
 

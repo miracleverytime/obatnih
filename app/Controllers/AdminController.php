@@ -4,6 +4,8 @@ namespace App\Controllers;
 use App\Models\ObatModel;
 use App\Models\ApotekerModel;
 use App\Models\AdminModel;
+use App\Models\TransaksiModel;
+use App\Models\UserModel;
 use CodeIgniter\HTTP\RedirectResponse;
 
 class AdminController extends BaseController
@@ -22,7 +24,19 @@ class AdminController extends BaseController
 
     public function laporanp(): string
     {
-        return view('admin/laporanpenjualan');
+        $transaksiModel = new TransaksiModel();
+        $userModel = new UserModel();
+
+        $transaksi = $transaksiModel->findAll();
+
+        // Gabungkan dengan nama user
+        $data['transaksi'] = array_map(function ($item) use ($userModel) {
+            $user = $userModel->find($item['id_user']);
+            $item['nama_user'] = $user['nama'] ?? 'Tidak diketahui';
+            return $item;
+        }, $transaksi);
+
+        return view('admin/laporanpenjualan', $data);
     }
 
     public function tstaff(): string

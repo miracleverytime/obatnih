@@ -64,7 +64,6 @@ class UserController extends BaseController
         $data = [
             'nama'   => $request->getPost('nama'),
             'email'    => $request->getPost('email'),
-            'password'    => $request->getPost('password'),
             'no_hp'    => $request->getPost('no_hp'),
             'alamat' => $request->getPost('alamat'),
         ];
@@ -113,12 +112,12 @@ public function riwayat()
 
     // Validasi password lama
     if (!password_verify($oldPassword, $user['password'])) {
-        return redirect()->back()->with('error', 'Password lama salah.');
+        return redirect()->back()->with('errorp', 'Password lama salah.');
     }
 
     // Validasi konfirmasi password
     if ($newPassword !== $confirmPassword) {
-        return redirect()->back()->with('error', 'Konfirmasi password tidak cocok.');
+        return redirect()->back()->with('errorp', 'Konfirmasi password tidak cocok.');
     }
 
     // Update password (hash dulu sebelum disimpan)
@@ -128,7 +127,7 @@ public function riwayat()
 
     $userModel->update($id, $data);
 
-    return redirect()->to('/user/profil')->with('success', 'Password berhasil diubah.');
+    return redirect()->to('/user/profil')->with('successp', 'Password berhasil diubah.');
 }
 
 public function bantuan()

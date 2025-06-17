@@ -341,7 +341,7 @@
     <div class="container">
         <div class="form-section">
             <h1 class="form-title">Metode Pembayaran</h1>
-            <form action="<?= base_url('user/pembayaran/proses') ?>" method="post">
+            <form action="<?= base_url('user/pembayaran/proses') ?>" method="post" id="formPembayaran">
                 <?= csrf_field() ?>
                 
                 <div class="payment-options">
@@ -467,6 +467,31 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 });
+
+document.addEventListener('DOMContentLoaded', function () {
+    const bayarForm = document.getElementById('formPembayaran');
+
+    bayarForm.addEventListener('submit', function(e) {
+        e.preventDefault(); // Cegah submit langsung
+
+        Swal.fire({
+            title: 'Konfirmasi Pembayaran',
+            text: "Apakah kamu yakin ingin melakukan pembayaran?",
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#aaa',
+            confirmButtonText: 'Ya, Bayar Sekarang',
+            cancelButtonText: 'Batal'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                bayarForm.submit(); // Baru submit di sini
+            }
+        });
+    });
+});
+
+
 </script>
 
 <?= $this->endSection(); ?>
