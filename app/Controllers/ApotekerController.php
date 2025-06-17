@@ -13,4 +13,9 @@ class ApotekerController extends BaseController
     {
         return view('apoteker/bantuan');
     }
+
+    public function logout(): string
+    {
+        return view('login');
+    }
 }
