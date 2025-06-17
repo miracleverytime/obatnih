@@ -8,4 +8,9 @@ class ApotekerController extends BaseController
     {
         return view('apoteker/dashboard');
     }
+
+    public function bantuan(): string
+    {
+        return view('apoteker/bantuan');
+    }
 }
