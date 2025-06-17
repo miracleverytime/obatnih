@@ -37,6 +37,8 @@ $routes->group('apoteker', ['filter' => 'auth:apoteker'], function ($routes) {
     $routes->get('validasi', 'ApotekerController::dashboard');
     $routes->get('dashboard', 'ApotekerController::dashboard');
     $routes->get('bantuan', 'ApotekerController::bantuan');
+    $routes->post('sendReply', 'ApotekerController::sendReply');
+    $routes->get('getChatByUser/(:num)', 'ApotekerController::getChatByUser/$1');
     $routes->get('logout',  'ApotekerController::logout');
     $routes->get('dashboard', 'ApotekerController::dashboard');
     $routes->get('validasi_transaksi/(:num)', 'ApotekerController::validasi_transaksi/$1');
@@ -57,6 +59,8 @@ $routes->group('user', ['filter' => 'auth:user'], function ($routes) {
     $routes->get('riwayat', 'UserController::riwayat');
     $routes->post('profil/update-password', 'UserController::updatePassword');
     $routes->get('bantuan', 'UserController::bantuan');
+    $routes->post('sendMessage', 'UserController::sendMessage');
+    $routes->get('getMessages', 'UserController::getMessages');
     $routes->post('keranjang/updateQuantity', 'KeranjangController::updateQuantity');
     $routes->post('keranjang/dpengiriman', 'KeranjangController::detailPengiriman');
     $routes->get('pembayaran/back', 'KeranjangController::detailPengiriman');
