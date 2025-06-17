@@ -23,6 +23,8 @@
 
     <!-- Main CSS-->
     <link href="<?= base_url('/assets/css/theme.css') ?>" rel="stylesheet" media="all">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 
 </head>
 
@@ -77,9 +79,10 @@
                             </a>
                         </li>
                         <li>
-                            <a href="<?= base_url('login') ?>" class="logout-link">
+                            <a href="#" class="logout-link" onclick="confirmLogout(event)">
                                 <i class="fas fa-sign-out-alt"></i> Logout
                             </a>
+
                         </li>
 
 
@@ -144,6 +147,25 @@
         $('#tableStaff').DataTable();
         $('#tableLaporan').DataTable();
     });
+    function confirmLogout(event) {
+        event.preventDefault(); // Cegah link langsung dijalankan
+
+        Swal.fire({
+            title: 'Konfirmasi Logout',
+            text: 'Apakah Anda yakin ingin logout?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Ya, Logout',
+            cancelButtonText: 'Batal',
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location.href = "<?= base_url('login') ?>"; // Ganti dengan route logout sesungguhnya jika ada
+            }
+        });
+    }
+
 </script>
 
 </body>

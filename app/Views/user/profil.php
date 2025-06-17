@@ -341,11 +341,22 @@
         });
 
         function logout() {
-            if(confirm('Apakah Anda yakin ingin logout?')) {
-                // Redirect ke halaman logout
-                window.location.href = '<?= base_url('/logout') ?>';
-            }
+    Swal.fire({
+        title: 'Konfirmasi Logout',
+        text: 'Apakah Anda yakin ingin logout?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Ya, Logout',
+        cancelButtonText: 'Batal'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            window.location.href = '<?= base_url('/logout') ?>';
         }
+    });
+}
+
     </script>
 </body>
 </html>

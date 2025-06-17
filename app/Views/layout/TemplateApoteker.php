@@ -21,6 +21,7 @@
 
     <!-- Main Theme CSS -->
     <link rel="stylesheet" href="<?= base_url('/assets/css/theme.css') ?>" media="all">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 
 <body class="animsition">
@@ -61,7 +62,7 @@
                             </a>
                         </li>
                         <li>
-                            <a href="<?= base_url('apoteker/logout') ?>">
+                            <a href="<?= base_url('apoteker/logout') ?>" onclick="logout(event)">
                                 <i class="fas fa-arrow-right-from-bracket"></i> Logout
                             </a>
                         </li>
@@ -115,6 +116,36 @@
         $(document).ready(function() {
             $('#tableTransaksi').DataTable();
         });
+        // Menambahkan interaktivitas sederhana
+        document.querySelectorAll('.form-input').forEach(input => {
+            input.addEventListener('focus', function() {
+                this.style.borderColor = '#666';
+            });
+            
+            input.addEventListener('blur', function() {
+                this.style.borderColor = '#ddd';
+            });
+        });
+
+        function logout(event) {
+    event.preventDefault(); // Mencegah link berjalan langsung
+
+    Swal.fire({
+        title: 'Konfirmasi Logout',
+        text: 'Apakah Anda yakin ingin logout?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Ya, Logout',
+        cancelButtonText: 'Batal'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            window.location.href = '<?= base_url('apoteker/logout') ?>';
+        }
+    });
+}
+
     </script>
 </body>
 

@@ -4,6 +4,7 @@ namespace App\Controllers;
 
 use App\Models\TransaksiModel;
 use App\Models\UserModel;
+use App\Models\ChatModel;
 
 class ApotekerController extends BaseController
 {
@@ -27,11 +28,6 @@ class ApotekerController extends BaseController
         return view('apoteker/dashboard', ['transaksi' => $transaksi]);
     }
 
-    public function bantuan()
-        {
-            return view('apoteker/bantuan');
-        }
-
         public function logout()
         {
             return view('login');
@@ -51,4 +47,28 @@ class ApotekerController extends BaseController
         return redirect()->to('/apoteker/dashboard');
     }
 
+    public function bantuan()
+{
+    $chatModel = new ChatModel();
+
+    $data['chats'] = $chatModel->orderBy('created_at', 'ASC')->findAll();
+
+    return view('apoteker/bantuan', $data);
+}
+
+public function sendChat()
+{
+    $chatModel = new ChatModel();
+    $id = session()->get('id');
+
+    $message = $this->request->getPost('message');
+
+    $chatModel->save([
+        'sender_role' => 'apoteker',
+        'sender_id' => $id,
+        'message' => $message
+    ]);
+
+    return redirect()->back();
+}
 }

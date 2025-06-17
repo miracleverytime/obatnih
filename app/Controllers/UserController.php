@@ -5,7 +5,7 @@ namespace App\Controllers;
 use App\Models\UserModel;
 use App\Models\ObatModel;
 use App\Models\TransaksiModel;
-
+use App\Models\ChatModel;
 
 class UserController extends BaseController
 {    
@@ -57,27 +57,29 @@ class UserController extends BaseController
 }
 
 
-    public function updateProfil()
+public function updateProfil()
 {
-        $userModel = new UserModel();
+    $userModel = new UserModel();
+    $request = \Config\Services::request();
+    $id = session()->get('id');
 
-        $request = \Config\Services::request();
-        $id = session()->get('id'); 
+    $dataBaru = [
+        'nama'   => $request->getPost('nama'),
+        'email'  => $request->getPost('email'),
+        'no_hp'  => $request->getPost('no_hp'),
+        'alamat' => $request->getPost('alamat'),
+    ];
 
-        $data = [
-            'nama'   => $request->getPost('nama'),
-            'email'    => $request->getPost('email'),
-            'no_hp'    => $request->getPost('no_hp'),
-            'alamat' => $request->getPost('alamat'),
-        ];
+    // Ambil data lama dari database
+    $dataLama = $userModel->find($id);
 
+    // Bandingkan data baru dan lama
+    if ($dataBaru === array_intersect_key($dataLama, $dataBaru)) {
+        return redirect()->back()->with('error', 'Tidak ada perubahan yang dilakukan.');
+    }
 
-        if (!empty(array_filter($data))) {
-            $userModel->update($id, $data);
-            return redirect()->to('/user/profil')->with('success', 'Data berhasil diperbarui.');
-        } else {
-            return redirect()->back()->with('error', 'Tidak ada data yang dikirim.');
-        }
+    $userModel->update($id, $dataBaru);
+    return redirect()->to('/user/profil')->with('success', 'Data berhasil diperbarui.');
 }
 
 public function riwayat()
@@ -156,7 +158,28 @@ public function riwayat()
 
 public function bantuan()
 {
-    return view('user/bantuan');
+    $chatModel = new ChatModel();
+
+    // Ambil semua chat, bisa diubah kalau mau difilter berdasarkan user
+    $data['chats'] = $chatModel->orderBy('created_at', 'ASC')->findAll();
+
+    return view('user/bantuan', $data);
+}
+
+public function sendChat()
+{
+    $chatModel = new ChatModel();
+    $id = session()->get('id');
+
+    $message = $this->request->getPost('message');
+
+    $chatModel->save([
+        'sender_role' => 'user',
+        'sender_id' => $id,
+        'message' => $message
+    ]);
+
+    return redirect()->back();
 }
 
 }

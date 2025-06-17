@@ -10,10 +10,17 @@
                         <div class="row">
                             <div class="col-lg-12">
                                 <div class="overview-wrap" style="margin-top: -27px;">
-                                <p>
-                                    <h1>Ini Dashboard!</h1>
-                                </p>
-                            </div> 
+                                    <p>
+                                        <h1>Ini Dashboard!</h1>
+                                    </p>
+                                </div> 
+                                <div class="container">
+                                    <div class="row">
+                                        <div class="col-3 mt-4">
+                                            selamat datang di halaman dashboar admin
+                                        </div>
+                                    </div>
+                                </div>
                                     </div>
                                 </div>
                             </div>
