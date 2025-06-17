@@ -281,7 +281,7 @@
 <div class="container">
         <div class="form-section">
             <h1 class="form-title">Detail Pengiriman</h1>
-            <form action="<?= base_url('user/pembayaran') ?>" method="get">
+            <form action="<?= base_url('user/proses-pengiriman') ?>" method="post">
                 <?= csrf_field() ?>
                     <div class="form-group">
                         <label for="nama_awal">Nama</label>

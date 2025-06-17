@@ -39,6 +39,17 @@
 
 <main class="container mt-4 mb-5">
   <div class="row">
+    <?php if(session()->getFlashdata('success')): ?>
+      <script>
+          Swal.fire({
+              icon: 'success',
+              title: 'Berhasil!',
+              text: '<?= session()->getFlashdata('success'); ?>',
+              confirmButtonColor: '#3085d6',
+              confirmButtonText: 'OK'
+          });
+      </script>
+      <?php endif; ?>
     <?php if (!empty($obat)): ?>
       <?php foreach ($obat as $item): ?>
         <div class="col-sm-6 col-md-4 col-lg-3 mb-4">

@@ -7,6 +7,7 @@ use App\Models\KeranjangModel;
 use App\Models\ObatModel;
 use App\Models\TransaksiModel;
 use App\Models\UserModel;
+use App\Models\PengirimanModel;
 use CodeIgniter\HTTP\ResponseInterface;
 
 class KeranjangController extends BaseController
@@ -433,6 +434,41 @@ private function hitungSubtotal()
         ]);
     }
 
+    public function prosesPengiriman()
+{
+    $request = \Config\Services::request();
+    $session = session();
+    $userId = $session->get('id');
+
+    // Ambil input form
+    $data = [
+        'id_user'        => $userId,
+        'nama'           => $request->getPost('nama') ?? $session->get('nama'),
+        'alamat'         => $request->getPost('alamat') ?? $session->get('alamat'),
+        'detail_alamat'  => $request->getPost('detail_alamat'),
+        'provinsi'       => $request->getPost('provinsi'),
+        'kota'           => $request->getPost('kota'),
+        'kode_pos'       => $request->getPost('kode_pos'),
+        'no_hp'          => $request->getPost('no_hp'),
+        'tanggal'        => date('Y-m-d H:i:s')
+    ];
+
+    // Validasi simple
+    if (empty($data['provinsi']) || empty($data['kota']) || empty($data['kode_pos'])) {
+        return redirect()->back()->with('error', 'Harap lengkapi data pengiriman.');
+    }
+
+    $pengirimanModel = new \App\Models\PengirimanModel();
+    $inserted = $pengirimanModel->insert($data);
+
+    if ($inserted) {
+        return redirect()->to('/user/pembayaran');
+    } else {
+        return redirect()->back()->with('error', 'Gagal menyimpan data pengiriman.');
+    }
+}
+
+
     public function pembayaran()
 {
         $keranjangModel = new KeranjangModel();
@@ -459,6 +495,61 @@ private function hitungSubtotal()
             'data' => $data,
         ]);
     }
+
+    public function pembayaranProses()
+    {
+        $keranjangModel = new \App\Models\KeranjangModel();
+        $transaksiModel = new \App\Models\TransaksiModel();
+        $userId = session()->get('id');
+
+        // Ambil data keranjang
+        $keranjang = $keranjangModel
+            ->join('obat', 'obat.id_obat = keranjang.id_obat')
+            ->select('keranjang.*, obat.harga_satuan')
+            ->findAll();
+
+        if (empty($keranjang)) {
+            return redirect()->back()->with('error', 'Keranjang kosong.');
+        }
+
+        // Hitung total harga
+        $total = 0;
+        foreach ($keranjang as $item) {
+            $total += $item['jumlah'] * $item['harga_satuan'];
+        }
+
+        $db = \Config\Database::connect();
+        $db->transStart();
+
+        try {
+            // Simpan data transaksi
+            $transaksiModel->insert([
+                'id_user'            => $userId,
+                'tanggal_transaksi'  => date('Y-m-d'),
+                'total_harga'        => $total,
+                'status'             => 'pending', // default
+            ]);
+
+            // Hapus isi keranjang
+            foreach ($keranjang as $item) {
+                $keranjangModel->delete($item['id']);
+            }
+
+            $db->transComplete();
+
+            if ($db->transStatus() === false) {
+                throw new \Exception('Transaksi gagal disimpan.');
+            }
+
+            return redirect()->to('/user/katalog')->with('success', 'Pembayaran berhasil! Transaksi sedang diproses.');
+
+
+        } catch (\Exception $e) {
+            $db->transRollback();
+            return redirect()->back()->with('error', 'Gagal memproses pembayaran: ' . $e->getMessage());
+        }
+    }
+
 
 
 }

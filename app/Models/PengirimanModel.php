@@ -4,15 +4,15 @@ namespace App\Models;
 
 use CodeIgniter\Model;
 
-class TransaksiModel extends Model
+class PengirimanModel extends Model
 {
-    protected $table            = 'transaksi';
+    protected $table            = 'pengiriman';
     protected $primaryKey       = 'id';
     protected $useAutoIncrement = true;
     protected $returnType       = 'array';
     protected $useSoftDeletes   = false;
     protected $protectFields    = true;
-    protected $allowedFields    = ['id_user', 'tanggal_transaksi', 'total_harga', 'status'];
+    protected $allowedFields    = ['id_user', 'nama', 'alamat', 'detail_alamat', 'provinsi', 'kota', 'kode_pos', 'no_hp', 'tanggal'];
 
     protected bool $allowEmptyInserts = false;
     protected bool $updateOnlyChanged = true;

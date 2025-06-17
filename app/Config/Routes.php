@@ -58,7 +58,9 @@ $routes->group('user', ['filter' => 'auth:user'], function ($routes) {
     $routes->post('keranjang/dpengiriman', 'KeranjangController::detailPengiriman');
     $routes->get('pembayaran/back', 'KeranjangController::detailPengiriman');
     $routes->post('pengiriman/proses', 'KeranjangController::detailPengiriman');
+    $routes->post('proses-pengiriman', 'KeranjangController::prosesPengiriman');
     $routes->get('pembayaran', 'KeranjangController::pembayaran');
+    $routes->post('pembayaran/proses', 'KeranjangController::pembayaranProses');
 });
 
 $routes->get('/coba', 'KeranjangController::coba');
