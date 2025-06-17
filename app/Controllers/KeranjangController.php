@@ -432,4 +432,33 @@ private function hitungSubtotal()
             'data' => $data,
         ]);
     }
+
+    public function pembayaran()
+{
+        $keranjangModel = new KeranjangModel();
+        $obatModel = new ObatModel();
+
+        $userModel = new UserModel();
+        $userId = session()->get('id');
+
+        // Ambil satu user berdasarkan ID
+        $data['user'] = $userModel->find($userId);
+
+        $keranjang = $keranjangModel
+            ->join('obat', 'obat.id_obat = keranjang.id_obat')
+            ->select('keranjang.*, obat.nama_obat, obat.harga_satuan, obat.gambar_obat')
+            ->findAll();
+
+        $subtotal = array_reduce($keranjang, function($carry, $item) {
+            return $carry + ($item['jumlah'] * $item['harga_satuan']);
+        }, 0);
+
+        return view('user/pembayaran', [
+            'keranjang' => $keranjang,
+            'subtotal' => $subtotal,
+            'data' => $data,
+        ]);
+    }
+
+
 }

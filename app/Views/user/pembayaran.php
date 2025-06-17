@@ -101,49 +101,93 @@
             color: #2c3e50;
         }
 
-        .form-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
+        .payment-options {
+            display: flex;
+            flex-direction: column;
             gap: 15px;
-            margin-bottom: 20px;
+            margin-bottom: 30px;
         }
 
-        .form-group {
-            margin-bottom: 20px;
+        .payment-option {
+            position: relative;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.2s;
         }
 
-        .form-group.full-width {
-            grid-column: 1 / -1;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 5px;
-            font-size: 14px;
-            color: #555;
-            font-weight: 500;
-        }
-
-        .form-group input,
-        .form-group textarea {
-            width: 100%;
-            padding: 12px 15px;
-            border: 1px solid #ddd;
-            border-radius: 6px;
-            font-size: 14px;
-            transition: border-color 0.2s;
-        }
-
-        .form-group input:focus,
-        .form-group textarea:focus {
-            outline: none;
+        .payment-option:hover {
             border-color: #4a90e2;
-            box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
         }
 
-        .form-group textarea {
-            resize: vertical;
-            min-height: 80px;
+        .payment-option input[type="radio"] {
+            position: absolute;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .payment-option.selected {
+            border-color: #4a90e2;
+            background-color: #f8fbff;
+        }
+
+        .payment-option-content {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .payment-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            background: #f8f9fa;
+        }
+
+        .payment-info {
+            flex: 1;
+        }
+
+        .payment-name {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 4px;
+            color: #2c3e50;
+        }
+
+        .payment-description {
+            font-size: 14px;
+            color: #666;
+        }
+
+        .radio-indicator {
+            width: 20px;
+            height: 20px;
+            border: 2px solid #ddd;
+            border-radius: 50%;
+            position: relative;
+            transition: all 0.2s;
+        }
+
+        .payment-option.selected .radio-indicator {
+            border-color: #4a90e2;
+        }
+
+        .payment-option.selected .radio-indicator::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 10px;
+            height: 10px;
+            background: #4a90e2;
+            border-radius: 50%;
         }
 
         .button-row {
@@ -192,6 +236,13 @@
             border-radius: 8px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
             height: fit-content;
+        }
+
+        .summary-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: #2c3e50;
         }
 
         .cart-item {
@@ -268,66 +319,79 @@
                 padding: 15px;
             }
 
-            .form-row {
-                grid-template-columns: 1fr;
-            }
-
             .nav-links {
                 display: none;
             }
+
+            .payment-option-content {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+
+            .radio-indicator {
+                position: absolute;
+                top: 20px;
+                right: 20px;
+            }
         }
     </style>
+
 <main>
-<div class="container">
+    <div class="container">
         <div class="form-section">
-            <h1 class="form-title">Detail Pengiriman</h1>
-            <form action="<?= base_url('user/pembayaran') ?>" method="get">
+            <h1 class="form-title">Metode Pembayaran</h1>
+            <form action="<?= base_url('user/pembayaran/proses') ?>" method="post">
                 <?= csrf_field() ?>
-                    <div class="form-group">
-                        <label for="nama_awal">Nama</label>
-                        <input type="text" id="nama" name="nama" placeholder="Masukkan nama" value="<?= esc($data['user']['nama']) ?>" required disabled>
-                    </div>
+                
+                <div class="payment-options">
+                    <label class="payment-option" for="tunai">
+                        <input type="radio" id="tunai" name="metode_pembayaran" value="tunai" required>
+                        <div class="payment-option-content">
+                            <div class="payment-icon">💵</div>
+                            <div class="payment-info">
+                                <div class="payment-name">Tunai</div>
+                                <div class="payment-description">Bayar saat barang diterima (COD)</div>
+                            </div>
+                            <div class="radio-indicator"></div>
+                        </div>
+                    </label>
 
-                <div class="form-group">
-                    <label for="alamat">Alamat</label>
-                    <input type="text" id="alamat" name="alamat" placeholder="Masukkan alamat lengkap" value="<?= esc($data['user']['alamat']) ?>" required disabled>
-                </div>
+                    <label class="payment-option" for="transfer">
+                        <input type="radio" id="transfer" name="metode_pembayaran" value="transfer_bank" required>
+                        <div class="payment-option-content">
+                            <div class="payment-icon">🏦</div>
+                            <div class="payment-info">
+                                <div class="payment-name">Transfer Bank</div>
+                                <div class="payment-description">Transfer ke rekening toko</div>
+                            </div>
+                            <div class="radio-indicator"></div>
+                        </div>
+                    </label>
 
-                <div class="form-group">
-                    <label for="detail_alamat">Detail alamat</label>
-                    <textarea id="detail_alamat" name="detail_alamat" placeholder="Masukkan detail alamat (opsional)"></textarea>
-                </div>
-
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="provinsi">Provinsi</label>
-                        <input type="text" id="provinsi" name="provinsi" placeholder="Pilih provinsi" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="kota">Kota</label>
-                        <input type="text" id="kota" name="kota" placeholder="Pilih kota" required>
-                    </div>
-                </div>
-
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="kode_pos">Kode pos</label>
-                        <input type="text" id="kode_pos" name="kode_pos" placeholder="Masukkan kode pos" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="no_hp">No HP</label>
-                        <input type="tel" id="no_hp" name="no_hp" placeholder="Masukkan nomor HP" value="<?= esc($data['user']['no_hp']) ?>" required>
-                    </div>
+                    <label class="payment-option selected" for="ewallet">
+                        <input type="radio" id="ewallet" name="metode_pembayaran" value="e_wallet" checked required>
+                        <div class="payment-option-content">
+                            <div class="payment-icon">📱</div>
+                            <div class="payment-info">
+                                <div class="payment-name">e-Wallet</div>
+                                <div class="payment-description">Bayar menggunakan OVO, GoPay, DANA, LinkAja</div>
+                            </div>
+                            <div class="radio-indicator"></div>
+                        </div>
+                    </label>
                 </div>
 
                 <div class="button-row">
-                    <button type="submit" class="btn btn-primary">Selanjutnya</button>
-                    <a href="<?= base_url('user/keranjang') ?>" class="btn btn-secondary">Batal</a>
+                    <button type="submit" class="btn btn-primary">Bayar</button>
+                    <a href="<?= base_url('user/pembayaran/back') ?>" class="btn btn-secondary">Batal</a>
                 </div>
             </form>
         </div>
 
         <div class="cart-summary">
+            <h3 class="summary-title">Ringkasan Belanja</h3>
+            
             <?php foreach ($keranjang as $item): ?>
             <div class="cart-item">
                 <div class="item-image">
@@ -339,11 +403,11 @@
                 </div>
                 <div class="item-details">
                     <div class="item-name"><?= esc($item['nama_obat']) ?></div>
-                            <div class="item-price">
-                                <span class="price-per-unit">Rp <?= number_format($item['harga_satuan'], 0, ',', '.') ?></span> x 
-                                <span class="quantity-display"><?= $item['jumlah'] ?></span> = 
-                                <span class="total-price">Rp <?= number_format($item['harga_satuan'] * $item['jumlah'], 0, ',', '.') ?></span>
-                            </div>
+                    <div class="item-price">
+                        <span class="price-per-unit">Rp <?= number_format($item['harga_satuan'], 0, ',', '.') ?></span> x 
+                        <span class="quantity-display"><?= $item['jumlah'] ?></span> = 
+                        <span class="total-price">Rp <?= number_format($item['harga_satuan'] * $item['jumlah'], 0, ',', '.') ?></span>
+                    </div>
                 </div>
             </div>
             <?php endforeach; ?>
@@ -367,4 +431,42 @@
         </div>
     </div>
 </main>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const paymentOptions = document.querySelectorAll('.payment-option');
+    const radioInputs = document.querySelectorAll('input[name="metode_pembayaran"]');
+
+    paymentOptions.forEach(option => {
+        option.addEventListener('click', function() {
+            // Remove selected class from all options
+            paymentOptions.forEach(opt => opt.classList.remove('selected'));
+            
+            // Add selected class to clicked option
+            this.classList.add('selected');
+            
+            // Check the radio input
+            const radioInput = this.querySelector('input[type="radio"]');
+            if (radioInput) {
+                radioInput.checked = true;
+            }
+        });
+    });
+
+    // Handle radio button changes
+    radioInputs.forEach(radio => {
+        radio.addEventListener('change', function() {
+            // Remove selected class from all options
+            paymentOptions.forEach(opt => opt.classList.remove('selected'));
+            
+            // Add selected class to parent option
+            const parentOption = this.closest('.payment-option');
+            if (parentOption) {
+                parentOption.classList.add('selected');
+            }
+        });
+    });
+});
+</script>
+
 <?= $this->endSection(); ?>
