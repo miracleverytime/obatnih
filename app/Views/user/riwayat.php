@@ -1,227 +1,160 @@
 <?= $this->extend('layout/templateUser') ?>
 <?= $this->section('content'); ?>
-  <!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Riwayat Pembelian</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
 
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f5f5f5;
-        }
+<style>
+    .container {
+        max-width: 1000px;
+        margin: 40px auto;
+        padding: 0 20px;
+    }
 
-        .wrapper {
-    min-height: 100%;
-    display: flex;
-    flex-direction: column;
-}
+    .page-title {
+        font-size: 24px;
+        color: #333;
+        margin-bottom: 30px;
+        font-weight: normal;
+    }
 
-.container {
-    flex: 1;
-}
+    .history-container {
+        background-color: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        overflow: hidden;
+    }
 
-.footer {
-    background-color: #333;
-    color: white;
-    text-align: center;
-    padding: 15px 0;
-    font-size: 14px;
-}
+    .transaction-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 20px 25px;
+        border-bottom: 1px solid #eee;
+        transition: background-color 0.3s;
+    }
 
-        .header {
-            background-color: white;
-            padding: 10px 20px;
-            border-bottom: 1px solid #ddd;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
+    .transaction-item:last-child {
+        border-bottom: none;
+    }
 
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
+    .transaction-item:hover {
+        background-color: #f9f9f9;
+    }
 
-        .logo-icon {
-            width: 30px;
-            height: 30px;
-            background-color: #ccc;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
+    .transaction-detail {
+        color: #666;
+        font-size: 14px;
+        margin-bottom: 5px;
+    }
 
-        .search-bar {
-            padding: 8px 15px;
-            border: 1px solid #ddd;
-            border-radius: 20px;
-            width: 250px;
-            outline: none;
-        }
+    .cetak-btn {
+        background-color: #666;
+        color: white;
+        border: none;
+        padding: 8px 20px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 14px;
+        transition: background-color 0.3s;
+    }
 
-        .nav-menu {
-            display: flex;
-            gap: 20px;
-            align-items: center;
-        }
+    .cetak-btn:hover {
+        background-color: #555;
+    }
 
-        .nav-item {
-            color: #666;
-            text-decoration: none;
-            padding: 5px 10px;
-            transition: color 0.3s;
-        }
+    .empty-state {
+        text-align: center;
+        padding: 60px 20px;
+        color: #999;
+    }
 
-        .nav-item:hover {
-            color: #333;
-        }
+    .empty-state-icon {
+        font-size: 48px;
+        margin-bottom: 20px;
+    }
 
-        .nav-item.active {
-            color: #333;
-            font-weight: bold;
-        }
+    .status-badge {
+        padding: 4px 10px;
+        border-radius: 12px;
+        font-size: 12px;
+        font-weight: bold;
+        color: white;
+        display: inline-block;
+    }
 
-        .cart-btn {
-            background-color: #666;
-            color: white;
-            padding: 8px 15px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
+    .status-badge.selesai {
+        background-color: #4CAF50;
+    }
 
-        .container {
-            max-width: 1200px;
-            margin: 40px auto;
-            padding: 0 20px;
-        }
+    .status-badge.pending {
+        background-color: #FFC107;
+        color: #333;
+    }
 
-        .page-title {
-            font-size: 24px;
-            color: #333;
-            margin-bottom: 30px;
-            font-weight: normal;
-        }
+    .status-badge.dibatalkan {
+        background-color: #F44336;
+    }
 
-        .history-container {
-            background-color: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            overflow: hidden;
-        }
-
+    @media (max-width: 768px) {
         .transaction-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 20px 25px;
-            border-bottom: 1px solid #eee;
-            transition: background-color 0.3s;
-        }
-
-        .transaction-item:last-child {
-            border-bottom: none;
-        }
-
-        .transaction-item:hover {
-            background-color: #f9f9f9;
-        }
-
-        .transaction-detail {
-            color: #666;
-            font-size: 14px;
+            flex-direction: column;
+            align-items: stretch;
+            gap: 15px;
         }
 
         .cetak-btn {
-            background-color: #666;
-            color: white;
-            border: none;
-            padding: 8px 20px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 14px;
-            transition: background-color 0.3s;
+            align-self: flex-end;
         }
+    }
+</style>
 
-        .cetak-btn:hover {
-            background-color: #555;
-        }
+<div class="container">
+    <h1 class="page-title">Riwayat Pembelian</h1>
 
-        .empty-state {
-            text-align: center;
-            padding: 60px 20px;
-            color: #999;
-        }
-
-        .empty-state-icon {
-            font-size: 48px;
-            margin-bottom: 20px;
-        }
-
-        @media (max-width: 768px) {
-            .header {
-                flex-wrap: wrap;
-                gap: 10px;
-            }
-            
-            .nav-menu {
-                display: none;
-            }
-            
-            .search-bar {
-                width: 200px;
-            }
-            
-            .transaction-item {
-                flex-direction: column;
-                align-items: stretch;
-                gap: 15px;
-            }
-            
-            .cetak-btn {
-                align-self: flex-end;
-            }
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <h1 class="page-title">Riwayat Pembelian</h1>
-        
+    <?php if (!empty($riwayat)): ?>
         <div class="history-container">
-            <div class="transaction-item">
-                <span class="transaction-detail">DETAIL TRANSAKSI.....</span>
-                <button class="cetak-btn" onclick="printTransaction(1)">Cetak</button>
-            </div>
-            
-            <div class="transaction-item">
-                <span class="transaction-detail">DETAIL TRANSAKSI.....</span>
-                <button class="cetak-btn" onclick="printTransaction(2)">Cetak</button>
-            </div>
-            
-            <div class="transaction-item">
-                <span class="transaction-detail">DETAIL TRANSAKSI.....</span>
-                <button class="cetak-btn" onclick="printTransaction(3)">Cetak</button>
-            </div>
-            
-            <div class="transaction-item">
-                <span class="transaction-detail">DETAIL TRANSAKSI.....</span>
-                <button class="cetak-btn" onclick="printTransaction(4)">Cetak</button>
-            </div>
+            <?php foreach ($riwayat as $r): ?>
+                <div class="transaction-item">
+                    <div>
+                        <div class="transaction-detail">
+                            <strong>Tanggal:</strong> <?= date('d M Y', strtotime($r['tanggal_transaksi'])) ?>
+                        </div>
+                        <div class="transaction-detail">
+                            <strong>Total:</strong> Rp<?= number_format($r['total_harga'], 0, ',', '.') ?>
+                        </div>
+                        <div class="transaction-detail">
+                            <strong>Status:</strong>
+                            <span class="status-badge <?= strtolower($r['status']) ?>">
+                                <?= esc(ucfirst($r['status'])) ?>
+                            </span>
+                        </div>
+                    </div>
+                    <button class="cetak-btn" onclick="printTransaction(<?= $r['id'] ?>)">Cetak</button>
+                </div>
+            <?php endforeach; ?>
         </div>
-    </div>
+    <?php else: ?>
+        <div class="empty-state">
+            <div class="empty-state-icon">🛒</div>
+            <p>Belum ada transaksi yang dilakukan.</p>
+        </div>
+    <?php endif; ?>
+</div>
+
+<script>
+    function printTransaction(idTransaksi) {
+        Swal.fire({
+            title: 'Cetak Transaksi?',
+            text: "PDF akan diunduh setelah konfirmasi.",
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonText: 'Cetak',
+            cancelButtonText: 'Batal'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.open(`/user/cetak/${idTransaksi}`, '_blank');
+            }
+        });
+    }
+</script>
+
 
 <?= $this->endSection(); ?>

@@ -4,16 +4,19 @@ namespace App\Controllers;
 
 use App\Models\UserModel;
 use App\Models\ObatModel;
+use App\Models\TransaksiModel;
 
 
 class UserController extends BaseController
 {    
 
     protected $obatModel;
+    protected $db;
     
     public function __construct()
     {
         $this->obatModel = new ObatModel();
+        $this->db = \Config\Database::connect();
     }
 
     public function katalog(): string
@@ -79,15 +82,36 @@ class UserController extends BaseController
 
 public function riwayat()
 {
-    // Ambil data riwayat transaksi dari database
-    // Misalnya, menggunakan model untuk mengambil data
-    $userModel = new UserModel();
     $userId = session()->get('id');
-    
-    // Ambil riwayat transaksi berdasarkan user ID
+    $transaksiModel = new TransaksiModel();
 
-    
-    return view('user/riwayat');
+    // Ambil transaksi milik user ini
+    $data['riwayat'] = $transaksiModel
+                        ->where('id_user', $userId)
+                        ->orderBy('tanggal_transaksi', 'DESC')
+                        ->findAll();
+
+    return view('user/riwayat', $data);
+}
+
+    public function printView($id)
+    {
+        // Ambil transaksi
+        $transaksi = $this->db->table('transaksi')->where('id', $id)->get()->getRow();
+
+        if (!$transaksi) {
+            return "Transaksi tidak ditemukan.";
+        }
+
+        // Ambil user yang melakukan transaksi
+        $user = $this->db->table('users')->where('id', $transaksi->id_user)->get()->getRow();
+
+        $data = [
+            'transaksi' => $transaksi,
+            'user' => $user
+        ];
+
+        return view('user/print_transaksi', $data);
     }
 
     public function gantiPassword()
