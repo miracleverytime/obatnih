@@ -87,12 +87,12 @@
     }
 
     .message.user {
-        align-self: flex-end;
-        flex-direction: row-reverse;
+        align-self: flex-start;
     }
 
     .message.apoteker {
-        align-self: flex-start;
+        align-self: flex-end;
+        flex-direction: row-reverse;
     }
 
     .message-avatar {
@@ -121,10 +121,10 @@
         border: 1px solid #e9ecef;
     }
 
-    .message.user .message-bubble {
-        background-color: #007bff;
+    .message.apoteker .message-bubble {
+        background-color: #28a745;
         color: white;
-        border: 1px solid #007bff;
+        border: 1px solid #28a745;
     }
 
     .message-time {
@@ -134,7 +134,7 @@
         opacity: 0.7;
     }
 
-    .message.user .message-time {
+    .message.apoteker .message-time {
         color: rgba(255,255,255,0.8);
     }
 
@@ -221,7 +221,7 @@
                         </div>
                     <?php else: ?>
                         <?php foreach ($users as $user): ?>
-                            <div class="user-item" onclick="selectUser(<?= $user['sender_id'] ?>, '<?= esc($user['nama']) ?>')">
+                            <div class="user-item" onclick="selectUser(<?= $user['id'] ?>, '<?= esc($user['nama']) ?>')">
                                 <div class="user-name"><?= esc($user['nama']) ?></div>
                                 <div class="last-message">
                                     <?= date('d/m/Y H:i', strtotime($user['last_message'])) ?>
@@ -418,4 +418,4 @@
     sendBtn.disabled = true;
 </script>
 
-<?= $this->endSection(); 
+<?= $this->endSection(); ?>

@@ -47,111 +47,100 @@ class ApotekerController extends BaseController
         return redirect()->to('/apoteker/dashboard');
     }
 
-public function bantuan()
-{
-    $chatModel = new ChatModel();
-    $userModel = new UserModel();
+    public function bantuan()
+    {
+        $chatModel = new ChatModel();
+        $userModel = new UserModel();
 
-    // Ambil semua chat dengan informasi user
-    $chats = $chatModel
-        ->select('chat.*, users.nama as nama_user')
-        ->join('users', 'users.id = chat.sender_id AND chat.sender_role = "user"', 'LEFT')
-        ->orderBy('chat.created_at', 'ASC')
-        ->findAll();
+        // Ambil daftar thread chat yang aktif (group by thread_id)
+        $activeThreads = $chatModel
+            ->select('thread_id, MAX(created_at) as last_message')
+            ->groupBy('thread_id')
+            ->orderBy('last_message', 'DESC')
+            ->findAll();
 
-    // Group chat berdasarkan user
-    $groupedChats = [];
-    foreach ($chats as $chat) {
-        if ($chat['sender_role'] == 'user') {
-            $groupedChats[$chat['sender_id']][] = $chat;
-        } else {
-            // Untuk pesan dari apoteker, kita perlu tahu ke user mana
-            // Karena struktur tabel tidak menyimpan recipient, kita ambil chat terakhir dari user
-            $lastUserMessage = $chatModel
-                ->where('sender_role', 'user')
-                ->where('created_at <', $chat['created_at'])
-                ->orderBy('created_at', 'DESC')
-                ->first();
-            
-            if ($lastUserMessage) {
-                $groupedChats[$lastUserMessage['sender_id']][] = $chat;
+        // Ambil informasi user untuk setiap thread
+        $users = [];
+        foreach ($activeThreads as $thread) {
+            // Extract user_id from thread_id (format: user_123)
+            if (preg_match('/user_(\d+)/', $thread['thread_id'], $matches)) {
+                $userId = $matches[1];
+                $user = $userModel->find($userId);
+                if ($user) {
+                    $users[] = [
+                        'id' => $userId,
+                        'nama' => $user['nama'],
+                        'thread_id' => $thread['thread_id'],
+                        'last_message' => $thread['last_message']
+                    ];
+                }
             }
+        }
+
+        $data = [
+            'users' => $users
+        ];
+
+        return view('apoteker/bantuan', $data);
+    }
+
+    public function sendReply()
+    {
+        $chatModel = new ChatModel();
+        $request = \Config\Services::request();
+        
+        $userId = $request->getPost('user_id');
+        $message = $request->getPost('message');
+        
+        if (empty($message) || empty($userId)) {
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Data tidak lengkap'
+            ]);
+        }
+        
+        $threadId = 'user_' . $userId;
+        
+        $data = [
+            'thread_id' => $threadId,
+            'sender_role' => 'apoteker',
+            'sender_id' => session()->get('id'),
+            'recipient_id' => $userId,
+            'message' => $message
+        ];
+        
+        $result = $chatModel->insert($data);
+        
+        if ($result) {
+            return $this->response->setJSON([
+                'status' => 'success',
+                'message' => 'Balasan berhasil dikirim',
+                'data' => $data
+            ]);
+        } else {
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Gagal mengirim balasan'
+            ]);
         }
     }
 
-    // Ambil daftar user yang pernah chat
-    $users = $chatModel
-        ->select('chat.sender_id, users.nama, MAX(chat.created_at) as last_message')
-        ->join('users', 'users.id = chat.sender_id')
-        ->where('chat.sender_role', 'user')
-        ->groupBy('chat.sender_id')
-        ->orderBy('last_message', 'DESC')
-        ->findAll();
-
-    $data = [
-        'chats' => $chats,
-        'groupedChats' => $groupedChats,
-        'users' => $users
-    ];
-
-    return view('apoteker/bantuan', $data);
-}
-
-public function sendReply()
-{
-    $chatModel = new ChatModel();
-    $request = \Config\Services::request();
-    
-    $userId = $request->getPost('user_id');
-    $message = $request->getPost('message');
-    
-    if (empty($message) || empty($userId)) {
-        return $this->response->setJSON([
-            'status' => 'error',
-            'message' => 'Data tidak lengkap'
-        ]);
-    }
-    
-    $data = [
-        'sender_role' => 'apoteker',
-        'sender_id' => session()->get('id'), // ID apoteker yang sedang login
-        'message' => $message
-    ];
-    
-    $result = $chatModel->insert($data);
-    
-    if ($result) {
+    public function getChatByUser($userId)
+    {
+        $chatModel = new ChatModel();
+        $threadId = 'user_' . $userId;
+        
+        // Ambil chat berdasarkan thread_id saja
+        $chats = $chatModel
+            ->where('thread_id', $threadId)
+            ->orderBy('created_at', 'ASC')
+            ->findAll();
+        
         return $this->response->setJSON([
             'status' => 'success',
-            'message' => 'Balasan berhasil dikirim',
-            'data' => $data
-        ]);
-    } else {
-        return $this->response->setJSON([
-            'status' => 'error',
-            'message' => 'Gagal mengirim balasan'
+            'data' => $chats
         ]);
     }
 }
 
-public function getChatByUser($userId)
-{
-    $chatModel = new ChatModel();
-    
-    // Ambil semua chat yang melibatkan user ini
-    $chats = $chatModel
-        ->groupStart()
-            ->where('sender_role', 'user')
-            ->where('sender_id', $userId)
-        ->groupEnd()
-        ->orWhere('sender_role', 'apoteker')
-        ->orderBy('created_at', 'ASC')
-        ->findAll();
-    
-    return $this->response->setJSON([
-        'status' => 'success',
-        'data' => $chats
-    ]);
-}
 
-}

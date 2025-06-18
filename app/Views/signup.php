@@ -14,13 +14,13 @@
 }
 
     .success-message {
-    background-color: #f8d7da;
-    border: 1px solid #f5c6cb;
-    color:rgb(44, 140, 31);
-    padding: 10px 15px;
-    border-radius: 10px;
-    margin-bottom: 1rem;
-    font-size: 0.875rem;
+      background-color: #d4edda;
+      border: 1px solid #c3e6cb;
+      color: #155724;
+      padding: 10px 15px;
+      border-radius: 10px;
+      margin-bottom: 1rem;
+      font-size: 0.875rem;
     }
 </style>
   <div class="wrapper">

@@ -15,6 +15,12 @@ $routes->post('/login/cek', 'LoginController::login');
 $routes->post('/signup/submit', 'RegisterController::submit');
 $routes->get('/hash', 'LoginController::hash');
 
+$routes->get('forgot', 'Home::lupaPassword');
+$routes->post('proses/forgot', 'Home::prosesLupaPassword');
+
+$routes->get('reset-password/(:any)', 'Home::resetPassword/$1');
+$routes->post('proses/reset-password', 'Home::prosesResetPassword');
+
 
 $routes->group('admin', ['filter' => 'auth:admin'], function ($routes) {
     $routes->get('dashboard', 'AdminController::dashboard');

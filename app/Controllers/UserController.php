@@ -168,83 +168,82 @@ public function riwayat()
     return redirect()->to('/user/profil')->with('successp', 'Password berhasil diubah.');
 }
 
-public function bantuan()
-{
-    $chatModel = new ChatModel();
-    $userId = session()->get('id');
+    public function bantuan()
+    {
+        $chatModel = new ChatModel();
+        $userId = session()->get('id');
+        
+        // Buat thread_id unik untuk user ini (user_[id])
+        $threadId = 'user_' . $userId;
 
-    // Ambil chat berdasarkan user yang sedang login (sebagai pengirim atau penerima)
-    $data['chats'] = $chatModel
-        ->where('sender_id', $userId)
-        ->orWhere('sender_role', 'apoteker') // Ambil juga balasan dari apoteker
-        ->orderBy('created_at', 'ASC')
-        ->findAll();
-    
-    $data['user_id'] = $userId;
+        // Ambil chat berdasarkan thread_id
+        $data['chats'] = $chatModel
+            ->where('thread_id', $threadId)
+            ->orderBy('created_at', 'ASC')
+            ->findAll();
+        
+        $data['user_id'] = $userId;
+        $data['thread_id'] = $threadId;
 
-    return view('user/bantuan', $data);
-}
-
-public function sendMessage()
-{
-    $chatModel = new ChatModel();
-    $request = \Config\Services::request();
-    
-    $userId = session()->get('id');
-    $message = $request->getPost('message');
-    
-    if (empty($message)) {
-        return $this->response->setJSON([
-            'status' => 'error',
-            'message' => 'Pesan tidak boleh kosong'
-        ]);
+        return view('user/bantuan', $data);
     }
-    
-    $data = [
-        'sender_role' => 'user',
-        'sender_id' => $userId,
-        'message' => $message
-    ];
-    
-    $result = $chatModel->insert($data);
-    
-    if ($result) {
+
+    public function sendMessage()
+    {
+        $chatModel = new ChatModel();
+        $request = \Config\Services::request();
+        
+        $userId = session()->get('id');
+        $message = $request->getPost('message');
+        
+        if (empty($message)) {
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Pesan tidak boleh kosong'
+            ]);
+        }
+        
+        $threadId = 'user_' . $userId;
+        
+        $data = [
+            'thread_id' => $threadId,
+            'sender_role' => 'user',
+            'sender_id' => $userId,
+            'recipient_id' => null, // Untuk apoteker (bisa diisi ID apoteker spesifik jika perlu)
+            'message' => $message
+        ];
+        
+        $result = $chatModel->insert($data);
+        
+        if ($result) {
+            return $this->response->setJSON([
+                'status' => 'success',
+                'message' => 'Pesan berhasil dikirim',
+                'data' => $data
+            ]);
+        } else {
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Gagal mengirim pesan'
+            ]);
+        }
+    }
+
+    public function getMessages()
+    {
+        $chatModel = new ChatModel();
+        $userId = session()->get('id');
+        $threadId = 'user_' . $userId;
+        
+        // Ambil chat berdasarkan thread_id saja
+        $chats = $chatModel
+            ->where('thread_id', $threadId)
+            ->orderBy('created_at', 'ASC')
+            ->findAll();
+        
         return $this->response->setJSON([
             'status' => 'success',
-            'message' => 'Pesan berhasil dikirim',
-            'data' => $data
-        ]);
-    } else {
-        return $this->response->setJSON([
-            'status' => 'error',
-            'message' => 'Gagal mengirim pesan'
+            'data' => $chats
         ]);
     }
-}
-
-public function getMessages()
-{
-    $chatModel = new ChatModel();
-    $userId = session()->get('id');
-    
-    // Ambil semua chat yang melibatkan user ini
-    $chats = $chatModel
-        ->groupStart()
-            ->where('sender_role', 'user')
-            ->where('sender_id', $userId)
-        ->groupEnd()
-        ->orWhere('sender_role', 'apoteker')
-        ->orderBy('created_at', 'ASC')
-        ->findAll();
-    
-    return $this->response->setJSON([
-        'status' => 'success',
-        'data' => $chats
-    ]);
-}
-
-
-
-
-
 }
