@@ -110,8 +110,8 @@
 
 
     <?= $this->renderSection('content'); ?>
+    <?= $this->renderSection('style'); ?>
 
-            
     <!-- Jquery JS-->
     <script src="vendor/jquery-3.2.1.min.js"></script>
     <!-- Bootstrap JS-->
@@ -139,6 +139,8 @@
 <link rel="stylesheet" href="https://cdn.datatables.net/2.3.1/css/dataTables.dataTables.min.css">
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script src="https://cdn.datatables.net/2.3.1/js/dataTables.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 
 <!-- Inisialisasi DataTables -->
 <script>
@@ -162,6 +164,24 @@
         }).then((result) => {
             if (result.isConfirmed) {
                 window.location.href = "<?= base_url('login') ?>"; // Ganti dengan route logout sesungguhnya jika ada
+            }
+        });
+    }
+    function confirmHapus(event) {
+        event.preventDefault(); // Cegah link langsung dijalankan
+
+        Swal.fire({
+            title: 'Konfirmasi Hapus',
+            text: 'Apakah Anda yakin Hapus?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Ya, Hapus',
+            cancelButtonText: 'Batal',
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location.href = "<?= base_url('dataobat') ?>"; // Ganti dengan route logout sesungguhnya jika ada
             }
         });
     }

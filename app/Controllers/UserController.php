@@ -19,12 +19,24 @@ class UserController extends BaseController
         $this->db = \Config\Database::connect();
     }
 
-    public function katalog(): string
-    {
-        $data['obat'] = $this->obatModel->findAll();
-        
-        return view('user/katalog', $data);
+    public function katalog()
+{
+    $query = $this->request->getGet('q');
+
+    $obatModel = new ObatModel();
+
+    if ($query) {
+        $obat = $obatModel->like('nama_obat', $query)->orLike('kemasan', $query)->findAll();
+    } else {
+        $obat = $obatModel->findAll();
     }
+
+    $data = [
+        'obat' => $obat
+    ];
+
+    return view('user/katalog', $data);
+}
 
 
     public function detailp($id)
@@ -230,6 +242,9 @@ public function getMessages()
         'data' => $chats
     ]);
 }
+
+
+
 
 
 }

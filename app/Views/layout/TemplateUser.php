@@ -54,9 +54,11 @@
     <img src="<?= base_url('/assets/gambar/logoweb1.png') ?>" alt="Logo" class="me-2">
     <strong>ObatNih</strong>
   </a>
-  <form class="d-flex mx-3" style="flex: 1; max-width: 400px;">
-    <input class="form-control me-2" type="search" placeholder="Cari..." aria-label="Search">
-  </form>
+  <form class="d-flex mx-3" style="flex: 1; max-width: 400px;" action="<?= base_url('user/katalog') ?>" method="get">
+  <input class="form-control me-2" type="search" name="q" placeholder="Cari obat..." aria-label="Search" value="<?= esc($_GET['q'] ?? '') ?>">
+  <button class="btn btn-outline-success" type="submit"><i class="fas fa-search"></i></button>
+</form>
+
   <ul class="navbar-nav ms-auto">
     <li class="nav-item"><a class="nav-link" href="<?= base_url('user/katalog') ?>">Home</a></li>
     <li class="nav-item"><a class="nav-link" href="<?= base_url('user/profil') ?>">Profile</a></li>
