@@ -79,6 +79,8 @@ ObatNih adalah sebuah sistem e-commerce berbasis web yang dirancang untuk memuda
 ---
 
 PAKAI PHP VERSI 8.1.25 JIKA TERJADI ERROR MYSQLI_RESULT
+Login admin: admin@gmail.com - 12345678
+Login apoteker: apoteker@gmail.com - 123456678
 
 ## ✅ Lisensi
 
