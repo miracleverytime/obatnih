@@ -7,7 +7,7 @@ use App\Models\UserModel;
 class Home extends BaseController
 {
     protected $userModel;
-    
+
     public function __construct()
     {
         $this->userModel = new UserModel();
@@ -44,10 +44,10 @@ class Home extends BaseController
         }
 
         $email = $this->request->getPost('email');
-        
+
         // Cek apakah email ada di database
         $user = $this->userModel->where('email', $email)->first();
-        
+
         if (!$user) {
             return redirect()->back()->with('error', 'Email tidak ditemukan dalam sistem');
         }
@@ -79,8 +79,8 @@ class Home extends BaseController
 
         // Cek token di database
         $user = $this->userModel->where('reset_token', $token)
-                                ->where('reset_token_expire >', date('Y-m-d H:i:s'))
-                                ->first();
+            ->where('reset_token_expire >', date('Y-m-d H:i:s'))
+            ->first();
 
         if (!$user) {
             return redirect()->to('login')->with('error', 'Token tidak valid atau sudah kadaluarsa. Silakan request ulang.');
@@ -109,8 +109,8 @@ class Home extends BaseController
 
         // Cek token masih valid
         $user = $this->userModel->where('reset_token', $token)
-                                ->where('reset_token_expire >', date('Y-m-d H:i:s'))
-                                ->first();
+            ->where('reset_token_expire >', date('Y-m-d H:i:s'))
+            ->first();
 
         if (!$user) {
             return redirect()->to('login')->with('error', 'Token tidak valid atau sudah kadaluarsa');
@@ -130,13 +130,13 @@ class Home extends BaseController
     private function kirimEmailReset($email, $token, $nama)
     {
         $emailService = \Config\Services::email();
-        
+
         $emailService->setFrom('noreply@obatnih.com', 'ObatNih Admin');
         $emailService->setTo($email);
         $emailService->setSubject('Reset Password - ObatNih');
-        
+
         $resetLink = base_url("reset-password/{$token}");
-        
+
         $message = "
         <div style='font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;'>
             <h2 style='color: #333;'>Reset Password ObatNih</h2>
@@ -166,10 +166,10 @@ class Home extends BaseController
             <p>Terima kasih,<br><strong>Tim ObatNih</strong></p>
         </div>
         ";
-        
+
         $emailService->setMessage($message);
         $emailService->setMailType('html');
-        
+
         if ($emailService->send()) {
             log_message('info', 'Email reset password berhasil dikirim ke: ' . $email);
             return true;
@@ -178,5 +178,4 @@ class Home extends BaseController
             return false;
         }
     }
-
 }

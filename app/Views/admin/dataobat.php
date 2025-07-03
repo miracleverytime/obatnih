@@ -9,14 +9,17 @@
         background: #f8f9fa;
         min-height: 100vh;
         padding: 30px 25px;
-        margin-top: 120px; /* Naikkan dari 100px ke 120px untuk memberikan space lebih */
+        margin-top: 120px;
+        /* Naikkan dari 100px ke 120px untuk memberikan space lebih */
         transition: all 0.3s ease;
     }
 
     @media (max-width: 992px) {
         .main-content {
-            margin-left: 0; /* sidebar collapse mode */
-            margin-top: 100px; /* Untuk mobile, sedikit lebih kecil */
+            margin-left: 0;
+            /* sidebar collapse mode */
+            margin-top: 100px;
+            /* Untuk mobile, sedikit lebih kecil */
             padding: 20px;
         }
     }
@@ -29,11 +32,13 @@
         box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
         border: 1px solid #e9ecef;
         margin-bottom: 25px;
-        margin-top: 0; /* Hapus margin-top negatif yang menyebabkan masalah */
+        margin-top: 0;
+        /* Hapus margin-top negatif yang menyebabkan masalah */
         display: flex;
         justify-content: space-between;
         align-items: center;
-        position: relative; /* Pastikan positioning normal */
+        position: relative;
+        /* Pastikan positioning normal */
     }
 
     .overview-wrap h1 {
@@ -250,7 +255,8 @@
     /* Responsive Design */
     @media (max-width: 768px) {
         .main-content {
-            margin-top: 90px; /* Lebih kecil untuk mobile */
+            margin-top: 90px;
+            /* Lebih kecil untuk mobile */
             padding: 15px;
         }
 
@@ -279,7 +285,9 @@
             padding: 10px 8px;
         }
 
-        .btn-warning, .btn-danger, .btn-info {
+        .btn-warning,
+        .btn-danger,
+        .btn-info {
             font-size: 0.75rem;
             padding: 6px 10px;
             margin: 1px;
@@ -333,7 +341,7 @@
                     <!-- Hapus style="margin-top: -27px;" yang menyebabkan overlap -->
                     <div class="overview-wrap">
                         <h1>Data Obat</h1>
-                        <a href="<?= base_url('admin/ke_obat')?>" class="btn btn-primary">
+                        <a href="<?= base_url('admin/ke_obat') ?>" class="btn btn-primary">
                             <i class="fas fa-plus"></i> Tambah Obat
                         </a>
                     </div>
@@ -353,34 +361,34 @@
                             <tbody>
                                 <?php $i = 1; ?>
                                 <?php foreach ($obat as $o) : ?>
-                                <tr>
-                                    <td><?= $i++; ?></td>
-                                    <td><strong><?= esc($o['nama_obat']); ?></strong></td>
-                                    <td><?= esc($o['kemasan']); ?></td>
-                                    <td><?= esc($o['golongan_obat']); ?></td>
-                                    <td>
-                                        <?php 
-                                        $stok = (int)$o['stok'];
-                                        $class = '';
-                                        if ($stok > 50) $class = 'stock-high';
-                                        elseif ($stok > 20) $class = 'stock-medium';
-                                        else $class = 'stock-low';
-                                        ?>
-                                        <span class="stock-badge <?= $class ?>"><?= esc($o['stok']); ?></span>
-                                    </td>
-                                    <td>
-                                        <a href="<?= base_url('admin/edit_obat/' . $o['id_obat']); ?>" class="btn btn-warning">
-                                            <i class="fas fa-edit"></i> Edit
-                                        </a>
-                                        <a href="<?= base_url('admin/delete_obat/' . $o['id_obat']); ?>" class="btn btn-danger" onclick="return confirm('Apakah Anda yakin ingin menghapus data ini?');">
-                                            <i class="fas fa-trash"></i> Hapus
-                                        </a>
+                                    <tr>
+                                        <td><?= $i++; ?></td>
+                                        <td><strong><?= esc($o['nama_obat']); ?></strong></td>
+                                        <td><?= esc($o['kemasan']); ?></td>
+                                        <td><?= esc($o['golongan_obat']); ?></td>
+                                        <td>
+                                            <?php
+                                            $stok = (int)$o['stok'];
+                                            $class = '';
+                                            if ($stok > 50) $class = 'stock-high';
+                                            elseif ($stok > 20) $class = 'stock-medium';
+                                            else $class = 'stock-low';
+                                            ?>
+                                            <span class="stock-badge <?= $class ?>"><?= esc($o['stok']); ?></span>
+                                        </td>
+                                        <td>
+                                            <a href="<?= base_url('admin/edit_obat/' . $o['id_obat']); ?>" class="btn btn-warning">
+                                                <i class="fas fa-edit"></i> Edit
+                                            </a>
+                                            <a href="<?= base_url('admin/delete_obat/' . $o['id_obat']); ?>" class="btn btn-danger" onclick="return confirm('Apakah Anda yakin ingin menghapus data ini?');">
+                                                <i class="fas fa-trash"></i> Hapus
+                                            </a>
 
-                                        <a href="<?= base_url('admin/detail_obat/' . $o['id_obat']); ?>" class="btn btn-info">
-                                            <i class="fas fa-eye"></i> Detail
-                                        </a>
-                                    </td>
-                                </tr>
+                                            <a href="<?= base_url('admin/detail_obat/' . $o['id_obat']); ?>" class="btn btn-info">
+                                                <i class="fas fa-eye"></i> Detail
+                                            </a>
+                                        </td>
+                                    </tr>
                                 <?php endforeach; ?>
                             </tbody>
                         </table>
@@ -395,20 +403,21 @@
 
 <?= $this->section('script'); ?>
 <script>
-$(document).ready(function() {
-    $('#tableObat').DataTable({
-        "language": {
-            "url": "//cdn.datatables.net/plug-ins/1.10.24/i18n/Indonesian.json"
-        },
-        "responsive": true,
-        "pageLength": 10,
-        "order": [[ 0, "asc" ]],
-        "columnDefs": [
-            { "orderable": false, "targets": 5 }
-        ]
+    $(document).ready(function() {
+        $('#tableObat').DataTable({
+            "language": {
+                "url": "//cdn.datatables.net/plug-ins/1.10.24/i18n/Indonesian.json"
+            },
+            "responsive": true,
+            "pageLength": 10,
+            "order": [
+                [0, "asc"]
+            ],
+            "columnDefs": [{
+                "orderable": false,
+                "targets": 5
+            }]
+        });
     });
-});
-
-
 </script>
 <?= $this->endSection(); ?>

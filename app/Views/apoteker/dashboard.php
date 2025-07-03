@@ -35,21 +35,21 @@
                             <tbody>
                                 <?php $i = 1; ?>
                                 <?php foreach ($transaksi as $t) : ?>
-                                <tr>
-                                    <td><?= $i++; ?></td>
-                                    <td><?= esc($t['nama']); ?></td>
-                                    <td><?= date('d-m-Y', strtotime($t['tanggal_transaksi'])); ?></td>
-                                    <td>Rp <?= number_format($t['total_harga'], 0, ',', '.'); ?></td>
-                                    <td><?= esc($t['status']); ?></td>
-                                    <td>
-                                        <?php if ($t['status'] === 'pending') : ?>
-                                            <a href="<?= base_url('apoteker/validasi_transaksi/' . $t['id']); ?>" class="btn btn-success" onclick="return confirm('Validasi transaksi ini?')">Validasi</a>
-                                            <a href="<?= base_url('apoteker/batalkan_transaksi/' . $t['id']); ?>" class="btn btn-danger" onclick="return confirm('Batalkan transaksi ini?')">Batalkan</a>
-                                        <?php else : ?>
-                                            <span class="text-muted">Tidak ada aksi</span>
-                                        <?php endif; ?>
-                                    </td>
-                                </tr>
+                                    <tr>
+                                        <td><?= $i++; ?></td>
+                                        <td><?= esc($t['nama']); ?></td>
+                                        <td><?= date('d-m-Y', strtotime($t['tanggal_transaksi'])); ?></td>
+                                        <td>Rp <?= number_format($t['total_harga'], 0, ',', '.'); ?></td>
+                                        <td><?= esc($t['status']); ?></td>
+                                        <td>
+                                            <?php if ($t['status'] === 'pending') : ?>
+                                                <a href="<?= base_url('apoteker/validasi_transaksi/' . $t['id']); ?>" class="btn btn-success" onclick="return confirm('Validasi transaksi ini?')">Validasi</a>
+                                                <a href="<?= base_url('apoteker/batalkan_transaksi/' . $t['id']); ?>" class="btn btn-danger" onclick="return confirm('Batalkan transaksi ini?')">Batalkan</a>
+                                            <?php else : ?>
+                                                <span class="text-muted">Tidak ada aksi</span>
+                                            <?php endif; ?>
+                                        </td>
+                                    </tr>
                                 <?php endforeach; ?>
                             </tbody>
                         </table>

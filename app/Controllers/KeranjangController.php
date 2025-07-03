@@ -40,124 +40,123 @@ class KeranjangController extends BaseController
     }
 
     // Fungsi baru untuk update quantity via AJAX
- public function updateQuantity()
-{
-    // Pastikan request adalah POST dan AJAX
-    if (!$this->request->isAJAX() || !$this->request->is('post')) {
-        return $this->response->setJSON([
-            'success' => false,
-            'message' => 'Invalid request'
-        ]);
-    }
-
-    $id = $this->request->getPost('id');
-    $jumlah = (int)$this->request->getPost('jumlah');
-
-    // Validasi input
-    if (!$id || $jumlah < 1 || $jumlah > 99999) {
-        return $this->response->setJSON([
-            'success' => false,
-            'message' => 'ID atau jumlah tidak valid (1-99999)'
-        ]);
-    }
-
-    $keranjangModel = new KeranjangModel();
-    $obatModel = new ObatModel();
-
-    // Ambil data keranjang saat ini
-    $keranjang = $keranjangModel->find($id);
-    if (!$keranjang) {
-        return $this->response->setJSON([
-            'success' => false,
-            'message' => 'Item tidak ditemukan di keranjang'
-        ]);
-    }
-
-    // Ambil data obat
-    $obat = $obatModel->find($keranjang['id_obat']);
-    if (!$obat) {
-        return $this->response->setJSON([
-            'success' => false,
-            'message' => 'Data obat tidak ditemukan'
-        ]);
-    }
-
-    // Hitung selisih quantity
-    $selisih = $jumlah - $keranjang['jumlah'];
-    
-    // Jika quantity bertambah, cek apakah stok mencukupi
-    if ($selisih > 0 && $obat['stok'] < $selisih) {
-        return $this->response->setJSON([
-            'success' => false,
-            'message' => 'Stok tidak mencukupi. Stok tersedia: ' . $obat['stok']
-        ]);
-    }
-
-    // Mulai transaksi database
-    $db = \Config\Database::connect();
-    $db->transStart();
-
-    try {
-        // Update quantity di keranjang
-        $keranjangModel->update($id, ['jumlah' => $jumlah]);
-
-        // Update stok obat (kurangi stok jika quantity bertambah, tambah jika berkurang)
-        $stok_baru = $obat['stok'] - $selisih;
-        $obatModel->update($obat['id_obat'], ['stok' => $stok_baru]);
-
-        $db->transComplete();
-
-        if ($db->transStatus() === false) {
-            throw new \Exception('Transaksi database gagal');
+    public function updateQuantity()
+    {
+        // Pastikan request adalah POST dan AJAX
+        if (!$this->request->isAJAX() || !$this->request->is('post')) {
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Invalid request'
+            ]);
         }
 
-        // Hitung subtotal baru
-        $subtotal_baru = $this->hitungSubtotal();
+        $id = $this->request->getPost('id');
+        $jumlah = (int)$this->request->getPost('jumlah');
 
-        // Set header response sebagai JSON
-        $this->response->setContentType('application/json');
+        // Validasi input
+        if (!$id || $jumlah < 1 || $jumlah > 99999) {
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'ID atau jumlah tidak valid (1-99999)'
+            ]);
+        }
 
-        return $this->response->setJSON([
-            'success' => true,
-            'message' => 'Quantity berhasil diupdate',
-            'data' => [
-                'jumlah' => $jumlah,
-                'total_item' => $jumlah * $obat['harga_satuan'],
-                'subtotal' => $subtotal_baru,
-                'stok_tersisa' => $stok_baru
-            ]
-        ]);
+        $keranjangModel = new KeranjangModel();
+        $obatModel = new ObatModel();
 
-    } catch (\Exception $e) {
-        $db->transRollback();
-        
-        // Set header response sebagai JSON
-        $this->response->setContentType('application/json');
-        
-        return $this->response->setJSON([
-            'success' => false,
-            'message' => 'Gagal mengupdate quantity: ' . $e->getMessage()
-        ]);
+        // Ambil data keranjang saat ini
+        $keranjang = $keranjangModel->find($id);
+        if (!$keranjang) {
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Item tidak ditemukan di keranjang'
+            ]);
+        }
+
+        // Ambil data obat
+        $obat = $obatModel->find($keranjang['id_obat']);
+        if (!$obat) {
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Data obat tidak ditemukan'
+            ]);
+        }
+
+        // Hitung selisih quantity
+        $selisih = $jumlah - $keranjang['jumlah'];
+
+        // Jika quantity bertambah, cek apakah stok mencukupi
+        if ($selisih > 0 && $obat['stok'] < $selisih) {
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Stok tidak mencukupi. Stok tersedia: ' . $obat['stok']
+            ]);
+        }
+
+        // Mulai transaksi database
+        $db = \Config\Database::connect();
+        $db->transStart();
+
+        try {
+            // Update quantity di keranjang
+            $keranjangModel->update($id, ['jumlah' => $jumlah]);
+
+            // Update stok obat (kurangi stok jika quantity bertambah, tambah jika berkurang)
+            $stok_baru = $obat['stok'] - $selisih;
+            $obatModel->update($obat['id_obat'], ['stok' => $stok_baru]);
+
+            $db->transComplete();
+
+            if ($db->transStatus() === false) {
+                throw new \Exception('Transaksi database gagal');
+            }
+
+            // Hitung subtotal baru
+            $subtotal_baru = $this->hitungSubtotal();
+
+            // Set header response sebagai JSON
+            $this->response->setContentType('application/json');
+
+            return $this->response->setJSON([
+                'success' => true,
+                'message' => 'Quantity berhasil diupdate',
+                'data' => [
+                    'jumlah' => $jumlah,
+                    'total_item' => $jumlah * $obat['harga_satuan'],
+                    'subtotal' => $subtotal_baru,
+                    'stok_tersisa' => $stok_baru
+                ]
+            ]);
+        } catch (\Exception $e) {
+            $db->transRollback();
+
+            // Set header response sebagai JSON
+            $this->response->setContentType('application/json');
+
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Gagal mengupdate quantity: ' . $e->getMessage()
+            ]);
+        }
     }
-}
 
-// Fungsi helper untuk menghitung subtotal (tetap sama)
-private function hitungSubtotal()
-{
-    $db = \Config\Database::connect();
-    $keranjang = $db->table('keranjang')
-        ->select('keranjang.jumlah, obat.harga_satuan')
-        ->join('obat', 'obat.id_obat = keranjang.id_obat')
-        ->get()
-        ->getResultArray();
+    // Fungsi helper untuk menghitung subtotal (tetap sama)
+    private function hitungSubtotal()
+    {
+        $db = \Config\Database::connect();
+        $keranjang = $db->table('keranjang')
+            ->select('keranjang.jumlah, obat.harga_satuan')
+            ->join('obat', 'obat.id_obat = keranjang.id_obat')
+            ->get()
+            ->getResultArray();
 
-    $subtotal = 0;
-    foreach ($keranjang as $item) {
-        $subtotal += $item['harga_satuan'] * $item['jumlah'];
+        $subtotal = 0;
+        foreach ($keranjang as $item) {
+            $subtotal += $item['harga_satuan'] * $item['jumlah'];
+        }
+
+        return $subtotal;
     }
-
-    return $subtotal;
-}
 
     public function tambah()
     {
@@ -183,15 +182,15 @@ private function hitungSubtotal()
 
         // Cek apakah obat sudah ada di keranjang
         $keranjang_existing = $keranjangModel->where('id_obat', $id_obat)->first();
-        
+
         if ($keranjang_existing) {
             // Jika sudah ada, update quantity
             $jumlah_baru = $keranjang_existing['jumlah'] + $jumlah;
-            
+
             if ($jumlah_baru > $obat['stok']) {
                 return redirect()->back()->with('error', 'Total quantity melebihi stok yang tersedia.');
             }
-            
+
             $keranjangModel->update($keranjang_existing['id'], [
                 'jumlah' => $jumlah_baru
             ]);
@@ -260,7 +259,7 @@ private function hitungSubtotal()
     public function checkout()
     {
         $db = \Config\Database::connect();
-        
+
         // Ambil semua item di keranjang
         $keranjang = $db->table('keranjang')
             ->select('keranjang.id, keranjang.jumlah, keranjang.id_obat, obat.nama_obat, obat.harga_satuan')
@@ -308,7 +307,6 @@ private function hitungSubtotal()
                 'total_keseluruhan' => $total_keseluruhan,
                 'waktu' => $waktu_transaksi
             ]);
-
         } catch (\Exception $e) {
             $db->transRollback();
             return redirect()->back()->with('error', 'Gagal memproses checkout: ' . $e->getMessage());
@@ -423,7 +421,7 @@ private function hitungSubtotal()
             ->select('keranjang.*, obat.nama_obat, obat.harga_satuan, obat.gambar_obat')
             ->findAll();
 
-        $subtotal = array_reduce($keranjang, function($carry, $item) {
+        $subtotal = array_reduce($keranjang, function ($carry, $item) {
             return $carry + ($item['jumlah'] * $item['harga_satuan']);
         }, 0);
 
@@ -435,42 +433,42 @@ private function hitungSubtotal()
     }
 
     public function prosesPengiriman()
-{
-    $request = \Config\Services::request();
-    $session = session();
-    $userId = $session->get('id');
+    {
+        $request = \Config\Services::request();
+        $session = session();
+        $userId = $session->get('id');
 
-    // Ambil input form
-    $data = [
-        'id_user'        => $userId,
-        'nama'           => $request->getPost('nama') ?? $session->get('nama'),
-        'alamat'         => $request->getPost('alamat') ?? $session->get('alamat'),
-        'detail_alamat'  => $request->getPost('detail_alamat'),
-        'provinsi'       => $request->getPost('provinsi'),
-        'kota'           => $request->getPost('kota'),
-        'kode_pos'       => $request->getPost('kode_pos'),
-        'no_hp'          => $request->getPost('no_hp'),
-        'tanggal'        => date('Y-m-d H:i:s')
-    ];
+        // Ambil input form
+        $data = [
+            'id_user'        => $userId,
+            'nama'           => $request->getPost('nama') ?? $session->get('nama'),
+            'alamat'         => $request->getPost('alamat') ?? $session->get('alamat'),
+            'detail_alamat'  => $request->getPost('detail_alamat'),
+            'provinsi'       => $request->getPost('provinsi'),
+            'kota'           => $request->getPost('kota'),
+            'kode_pos'       => $request->getPost('kode_pos'),
+            'no_hp'          => $request->getPost('no_hp'),
+            'tanggal'        => date('Y-m-d H:i:s')
+        ];
 
-    // Validasi simple
-    if (empty($data['provinsi']) || empty($data['kota']) || empty($data['kode_pos'])) {
-        return redirect()->back()->with('error', 'Harap lengkapi data pengiriman.');
+        // Validasi simple
+        if (empty($data['provinsi']) || empty($data['kota']) || empty($data['kode_pos'])) {
+            return redirect()->back()->with('error', 'Harap lengkapi data pengiriman.');
+        }
+
+        $pengirimanModel = new \App\Models\PengirimanModel();
+        $inserted = $pengirimanModel->insert($data);
+
+        if ($inserted) {
+            return redirect()->to('/user/pembayaran');
+        } else {
+            return redirect()->back()->with('error', 'Gagal menyimpan data pengiriman.');
+        }
     }
-
-    $pengirimanModel = new \App\Models\PengirimanModel();
-    $inserted = $pengirimanModel->insert($data);
-
-    if ($inserted) {
-        return redirect()->to('/user/pembayaran');
-    } else {
-        return redirect()->back()->with('error', 'Gagal menyimpan data pengiriman.');
-    }
-}
 
 
     public function pembayaran()
-{
+    {
         $keranjangModel = new KeranjangModel();
         $obatModel = new ObatModel();
 
@@ -485,7 +483,7 @@ private function hitungSubtotal()
             ->select('keranjang.*, obat.nama_obat, obat.harga_satuan, obat.gambar_obat')
             ->findAll();
 
-        $subtotal = array_reduce($keranjang, function($carry, $item) {
+        $subtotal = array_reduce($keranjang, function ($carry, $item) {
             return $carry + ($item['jumlah'] * $item['harga_satuan']);
         }, 0);
 
@@ -542,14 +540,9 @@ private function hitungSubtotal()
             }
 
             return redirect()->to('/user/katalog')->with('success', 'Pembayaran berhasil! Transaksi sedang diproses.');
-
-
         } catch (\Exception $e) {
             $db->transRollback();
             return redirect()->back()->with('error', 'Gagal memproses pembayaran: ' . $e->getMessage());
         }
     }
-
-
-
 }

@@ -14,9 +14,7 @@ class KeranjangModel extends Model
     public function getKeranjang()
     {
         return $this->select('keranjang.id, obat.nama_obat, keranjang.jumlah')
-                    ->join('obat', 'obat.id_obat = keranjang.id_obat')
-                    ->findAll();
+            ->join('obat', 'obat.id_obat = keranjang.id_obat')
+            ->findAll();
     }
 }
-
-

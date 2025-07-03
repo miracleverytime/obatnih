@@ -5,16 +5,20 @@ ObatNih adalah sebuah sistem e-commerce berbasis web yang dirancang untuk memuda
 ## 🚀 Fitur Utama
 
 ### 🔓 Autentikasi & Hak Akses
+
 - **Login & Register** untuk user
 - Role-based login (Admin, Apoteker, User)
 - Proteksi URL berdasarkan role login
 
 ### 🧾 Fitur Pengguna (User)
+
 - Lihat daftar obat lengkap dengan gambar & deskripsi
 - Cari dan lihat detail produk
-- Tambahkan ke keranjang 
+- Tambahkan ke keranjang
+- Konsultasi dengan apoteker
 
 ### ⚙️ Fitur Admin
+
 - Dashboard Admin
 - Tambah, edit, hapus obat
 - Upload gambar obat
@@ -22,8 +26,9 @@ ObatNih adalah sebuah sistem e-commerce berbasis web yang dirancang untuk memuda
 - Kelola data staff (admin & apoteker)
 
 ### 🧪 Fitur Apoteker
+
 - Validasi data dan proses pesanan
-- Dashboard khusus apoteker
+- Konsultasi atau bantuan
 
 ---
 
@@ -59,20 +64,21 @@ ObatNih adalah sebuah sistem e-commerce berbasis web yang dirancang untuk memuda
 1. Clone repo ini
 2. Buat database `obatnih` lalu import file `.sql`
 3. Konfigurasi `.env`:
-    ```bash
-    database.default.hostname = localhost
-    database.default.database = obatnih
-    database.default.username = root
-    database.default.password = 
-    ```
+   ```bash
+   database.default.hostname = localhost
+   database.default.database = obatnih
+   database.default.username = root
+   database.default.password =
+   ```
 4. Jalankan:
-    ```bash
-    php spark serve
-    ```
+   ```bash
+   php spark serve
+   ```
 5. Akses di browser: `http://localhost:8080`
 
 ---
 
+PAKAI PHP VERSI 8.1.25 JIKA TERJADI ERROR MYSQLI_RESULT
 
 ## ✅ Lisensi
 

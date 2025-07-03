@@ -75,10 +75,6 @@ $routes->group('user', ['filter' => 'auth:user'], function ($routes) {
     $routes->get('pembayaran', 'KeranjangController::pembayaran');
     $routes->post('pembayaran/proses', 'KeranjangController::pembayaranProses');
     $routes->get('cetak/(:num)', 'UserController::printView/$1');
-
 });
 
 $routes->get('/coba', 'KeranjangController::coba');
-
-
-

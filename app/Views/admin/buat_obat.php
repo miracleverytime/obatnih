@@ -13,7 +13,7 @@
                     </div>
 
                     <div class="container mt-4">
-                    <form action="<?= base_url('admin/buat_obat') ?>" method="post" enctype="multipart/form-data">
+                        <form action="<?= base_url('admin/buat_obat') ?>" method="post" enctype="multipart/form-data">
                             <div class="mb-3">
                                 <label for="nama_obat">Nama Obat</label>
                                 <input type="text" name="nama_obat" id="nama_obat" class="form-control" required>

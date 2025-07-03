@@ -12,16 +12,16 @@ class ChatModel extends Model
     protected $returnType       = 'array';
     protected $useSoftDeletes   = false;
     protected $protectFields    = true;
-    
+
     // UPDATE: Tambah thread_id dan recipient_id ke allowedFields
     protected $allowedFields    = [
-        'sender_role', 
-        'sender_id', 
-        'message', 
-        'thread_id', 
-        'recipient_id', 
-        'created_at', 
-        'updated_at', 
+        'sender_role',
+        'sender_id',
+        'message',
+        'thread_id',
+        'recipient_id',
+        'created_at',
+        'updated_at',
         'deleted_at'
     ];
 
@@ -45,7 +45,7 @@ class ChatModel extends Model
         'message' => 'required|max_length[1000]',
         'thread_id' => 'required|max_length[50]'
     ];
-    
+
     protected $validationMessages = [
         'sender_role' => [
             'required' => 'Role pengirim harus diisi',
@@ -85,8 +85,8 @@ class ChatModel extends Model
     public function getChatByThread($threadId)
     {
         return $this->where('thread_id', $threadId)
-                    ->orderBy('created_at', 'ASC')
-                    ->findAll();
+            ->orderBy('created_at', 'ASC')
+            ->findAll();
     }
 
     /**
@@ -95,9 +95,9 @@ class ChatModel extends Model
     public function getActiveThreads()
     {
         return $this->select('thread_id, MAX(created_at) as last_message, COUNT(*) as message_count')
-               ->groupBy('thread_id')
-               ->orderBy('last_message', 'DESC')
-               ->findAll();
+            ->groupBy('thread_id')
+            ->orderBy('last_message', 'DESC')
+            ->findAll();
     }
 
     /**
@@ -106,10 +106,10 @@ class ChatModel extends Model
     public function getThreadWithUserInfo($threadId)
     {
         return $this->select('chat.*, users.nama as user_name')
-               ->join('users', 'users.id = chat.sender_id', 'left')
-               ->where('chat.thread_id', $threadId)
-               ->orderBy('chat.created_at', 'ASC')
-               ->findAll();
+            ->join('users', 'users.id = chat.sender_id', 'left')
+            ->where('chat.thread_id', $threadId)
+            ->orderBy('chat.created_at', 'ASC')
+            ->findAll();
     }
 
     /**
@@ -127,11 +127,11 @@ class ChatModel extends Model
     public function getUsersWithChats()
     {
         return $this->select('SUBSTRING(chat.thread_id, 6) as user_id, users.nama, MAX(chat.created_at) as last_message')
-               ->join('users', 'users.id = SUBSTRING(chat.thread_id, 6)', 'inner')
-               ->where('chat.thread_id LIKE', 'user_%')
-               ->groupBy('chat.thread_id')
-               ->orderBy('last_message', 'DESC')
-               ->findAll();
+            ->join('users', 'users.id = SUBSTRING(chat.thread_id, 6)', 'inner')
+            ->where('chat.thread_id LIKE', 'user_%')
+            ->groupBy('chat.thread_id')
+            ->orderBy('last_message', 'DESC')
+            ->findAll();
     }
 
     /**
@@ -140,13 +140,13 @@ class ChatModel extends Model
     public function getUnreadMessagesCount($threadId, $lastReadTime = null)
     {
         $builder = $this->where('thread_id', $threadId);
-        
+
         if ($lastReadTime) {
             $builder->where('created_at >', $lastReadTime);
         } else {
             $builder->where('created_at >', date('Y-m-d H:i:s', strtotime('-24 hours')));
         }
-        
+
         return $builder->countAllResults();
     }
 
@@ -156,8 +156,8 @@ class ChatModel extends Model
     public function getUnreadUserMessagesCount()
     {
         return $this->where('sender_role', 'user')
-               ->where('created_at >', date('Y-m-d H:i:s', strtotime('-24 hours')))
-               ->countAllResults();
+            ->where('created_at >', date('Y-m-d H:i:s', strtotime('-24 hours')))
+            ->countAllResults();
     }
 
     /**
@@ -166,15 +166,15 @@ class ChatModel extends Model
     public function getLatestMessagesByThreads()
     {
         $subQuery = $this->select('thread_id, MAX(created_at) as max_created_at')
-                        ->groupBy('thread_id')
-                        ->getCompiledSelect();
+            ->groupBy('thread_id')
+            ->getCompiledSelect();
 
         return $this->select('chat.*, users.nama as user_name')
-               ->join("($subQuery) as latest", 'latest.thread_id = chat.thread_id AND latest.max_created_at = chat.created_at')
-               ->join('users', 'users.id = SUBSTRING(chat.thread_id, 6)', 'left')
-               ->where('chat.thread_id LIKE', 'user_%')
-               ->orderBy('chat.created_at', 'DESC')
-               ->findAll();
+            ->join("($subQuery) as latest", 'latest.thread_id = chat.thread_id AND latest.max_created_at = chat.created_at')
+            ->join('users', 'users.id = SUBSTRING(chat.thread_id, 6)', 'left')
+            ->where('chat.thread_id LIKE', 'user_%')
+            ->orderBy('chat.created_at', 'DESC')
+            ->findAll();
     }
 
     /**
@@ -184,14 +184,14 @@ class ChatModel extends Model
     {
         $threadId = 'user_' . $userId;
         $lastMessage = $this->where('thread_id', $threadId)
-                           ->orderBy('created_at', 'DESC')
-                           ->first();
-        
+            ->orderBy('created_at', 'DESC')
+            ->first();
+
         if ($lastMessage) {
             $timeDiff = time() - strtotime($lastMessage['created_at']);
             return $timeDiff < 3600; // Active if last message within 1 hour
         }
-        
+
         return false;
     }
 
@@ -238,8 +238,8 @@ class ChatModel extends Model
     public function searchInThread($threadId, $keyword)
     {
         return $this->where('thread_id', $threadId)
-                    ->like('message', $keyword)
-                    ->orderBy('created_at', 'DESC')
-                    ->findAll();
+            ->like('message', $keyword)
+            ->orderBy('created_at', 'DESC')
+            ->findAll();
     }
 }

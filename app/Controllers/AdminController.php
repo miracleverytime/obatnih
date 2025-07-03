@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Controllers;
 
 use App\Models\ObatModel;
@@ -9,7 +10,7 @@ use App\Models\UserModel;
 use CodeIgniter\HTTP\RedirectResponse;
 
 class AdminController extends BaseController
-{ 
+{
     public function dashboard(): string
     {
         return view('admin/dashboard');
@@ -127,14 +128,14 @@ class AdminController extends BaseController
         return redirect()->to(base_url('admin/dataobat'));
     }
 
-        public function hapusadmin($id)
+    public function hapusadmin($id)
     {
         $adminModel = new AdminModel();
         $adminModel->delete($id);
         return redirect()->to(base_url('admin/tambahstaff'));
     }
 
-        public function hapusapoteker($id)
+    public function hapusapoteker($id)
     {
         $apotekerModel = new ApotekerModel();
         $apotekerModel->delete($id);
@@ -153,35 +154,35 @@ class AdminController extends BaseController
         return view('admin/detail_obat', $data);
     }
 
-        public function buat()
-        {
-            $obatModel = new ObatModel();
+    public function buat()
+    {
+        $obatModel = new ObatModel();
 
-            $gambar = $this->request->getFile('gambar_obat');
-            $namaFile = null;
+        $gambar = $this->request->getFile('gambar_obat');
+        $namaFile = null;
 
-            if ($gambar && $gambar->isValid() && !$gambar->hasMoved()) {
-                $namaFile = $gambar->getRandomName();
-                $gambar->move('assets/gambar', $namaFile);
-            }
-
-            $obatModel->insert([
-                'nama_obat' => $this->request->getPost('nama_obat'),
-                'dosis' => $this->request->getPost('dosis'),
-                'kemasan' => $this->request->getPost('kemasan'),
-                'komposisi' => $this->request->getPost('komposisi'),
-                'golongan_obat' => $this->request->getPost('golongan_obat'),
-                'kontra_indikasi' => $this->request->getPost('kontra_indikasi'),
-                'harga_satuan' => $this->request->getPost('harga_satuan'),
-                'stok' => $this->request->getPost('stok'),
-                'cara_pakai' => $this->request->getPost('cara_pakai'),
-                'efek_samping' => $this->request->getPost('efek_samping'),
-                'deskripsi' => $this->request->getPost('deskripsi'),
-                'gambar_obat' => $namaFile
-            ]);
-
-            return redirect()->to(base_url('admin/dataobat'));
+        if ($gambar && $gambar->isValid() && !$gambar->hasMoved()) {
+            $namaFile = $gambar->getRandomName();
+            $gambar->move('assets/gambar', $namaFile);
         }
+
+        $obatModel->insert([
+            'nama_obat' => $this->request->getPost('nama_obat'),
+            'dosis' => $this->request->getPost('dosis'),
+            'kemasan' => $this->request->getPost('kemasan'),
+            'komposisi' => $this->request->getPost('komposisi'),
+            'golongan_obat' => $this->request->getPost('golongan_obat'),
+            'kontra_indikasi' => $this->request->getPost('kontra_indikasi'),
+            'harga_satuan' => $this->request->getPost('harga_satuan'),
+            'stok' => $this->request->getPost('stok'),
+            'cara_pakai' => $this->request->getPost('cara_pakai'),
+            'efek_samping' => $this->request->getPost('efek_samping'),
+            'deskripsi' => $this->request->getPost('deskripsi'),
+            'gambar_obat' => $namaFile
+        ]);
+
+        return redirect()->to(base_url('admin/dataobat'));
+    }
 
 
     public function membuatobat()

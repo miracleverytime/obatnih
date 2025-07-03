@@ -28,10 +28,10 @@ class ApotekerController extends BaseController
         return view('apoteker/dashboard', ['transaksi' => $transaksi]);
     }
 
-        public function logout()
-        {
-            return view('login');
-        }
+    public function logout()
+    {
+        return view('login');
+    }
 
     public function validasi_transaksi($id)
     {
@@ -88,19 +88,19 @@ class ApotekerController extends BaseController
     {
         $chatModel = new ChatModel();
         $request = \Config\Services::request();
-        
+
         $userId = $request->getPost('user_id');
         $message = $request->getPost('message');
-        
+
         if (empty($message) || empty($userId)) {
             return $this->response->setJSON([
                 'status' => 'error',
                 'message' => 'Data tidak lengkap'
             ]);
         }
-        
+
         $threadId = 'user_' . $userId;
-        
+
         $data = [
             'thread_id' => $threadId,
             'sender_role' => 'apoteker',
@@ -108,9 +108,9 @@ class ApotekerController extends BaseController
             'recipient_id' => $userId,
             'message' => $message
         ];
-        
+
         $result = $chatModel->insert($data);
-        
+
         if ($result) {
             return $this->response->setJSON([
                 'status' => 'success',
@@ -129,18 +129,16 @@ class ApotekerController extends BaseController
     {
         $chatModel = new ChatModel();
         $threadId = 'user_' . $userId;
-        
+
         // Ambil chat berdasarkan thread_id saja
         $chats = $chatModel
             ->where('thread_id', $threadId)
             ->orderBy('created_at', 'ASC')
             ->findAll();
-        
+
         return $this->response->setJSON([
             'status' => 'success',
             'data' => $chats
         ]);
     }
 }
-
-

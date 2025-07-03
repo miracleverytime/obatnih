@@ -66,7 +66,7 @@
                                 <i class="fas fa-arrow-right-from-bracket"></i> Logout
                             </a>
                         </li>
-                       
+
                     </ul>
                     <hr class="custom-hr">
                 </nav>
@@ -89,7 +89,7 @@
             </header>
             <!-- END HEADER DESKTOP -->
 
-<?= $this->renderSection('content'); ?>
+            <?= $this->renderSection('content'); ?>
 
 
             <!-- FOOTER -->
@@ -106,7 +106,7 @@
 
     <!-- Bootstrap Bundle JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-        <!-- Main JS-->
+    <!-- Main JS-->
     <script src="<?= base_url('assets/js/script.js') ?>"></script>
     <!-- DataTables CSS & JS -->
     <link rel="stylesheet" href="https://cdn.datatables.net/2.3.1/css/dataTables.dataTables.min.css">
@@ -121,31 +121,30 @@
             input.addEventListener('focus', function() {
                 this.style.borderColor = '#666';
             });
-            
+
             input.addEventListener('blur', function() {
                 this.style.borderColor = '#ddd';
             });
         });
 
         function logout(event) {
-    event.preventDefault(); // Mencegah link berjalan langsung
+            event.preventDefault(); // Mencegah link berjalan langsung
 
-    Swal.fire({
-        title: 'Konfirmasi Logout',
-        text: 'Apakah Anda yakin ingin logout?',
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#d33',
-        confirmButtonText: 'Ya, Logout',
-        cancelButtonText: 'Batal'
-    }).then((result) => {
-        if (result.isConfirmed) {
-            window.location.href = '<?= base_url('apoteker/logout') ?>';
+            Swal.fire({
+                title: 'Konfirmasi Logout',
+                text: 'Apakah Anda yakin ingin logout?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Ya, Logout',
+                cancelButtonText: 'Batal'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = '<?= base_url('apoteker/logout') ?>';
+                }
+            });
         }
-    });
-}
-
     </script>
 </body>
 

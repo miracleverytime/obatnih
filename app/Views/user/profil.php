@@ -1,7 +1,8 @@
 <?= $this->extend('layout/templateUser'); ?>
 <?= $this->section('content'); ?>
-    <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -84,7 +85,7 @@
             background-color: white;
             padding: 30px;
             border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
 
         .sidebar {
@@ -92,7 +93,7 @@
             background-color: white;
             padding: 30px;
             border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
             height: fit-content;
         }
 
@@ -213,12 +214,12 @@
                 flex-direction: column;
                 gap: 20px;
             }
-            
+
             .form-row {
                 flex-direction: column;
                 gap: 15px;
             }
-            
+
             .nav-menu {
                 display: none;
             }
@@ -226,106 +227,107 @@
             .form-buttons {
                 flex-direction: column;
             }
-            
+
             .sidebar {
                 order: -1;
             }
         }
     </style>
 </head>
+
 <body>
     <main>
-    <div class="container">
-        <div class="profile-form">
-            <h1 class="profile-title">Profile Pengguna</h1>
-            <?php if(session()->getFlashdata('success')): ?>
-                <div class="success-message">
-                    <?= session()->getFlashdata('success'); ?>
-                </div>
-            <?php endif; ?>
-            
-            <?php if(session()->getFlashdata('error')): ?>
-                <div class="error-message">
-                    <?= session()->getFlashdata('error'); ?>
-                </div>
-            <?php endif; ?>
-            
-            <form method="post" action="<?= base_url('/user/profil/update') ?>">
-                <div class="form-row">
-                    <div class="form-group">
-                        <input type="text" class="form-input" placeholder="Nama awal" name="nama" value="<?= $user['nama'] ?>">
+        <div class="container">
+            <div class="profile-form">
+                <h1 class="profile-title">Profile Pengguna</h1>
+                <?php if (session()->getFlashdata('success')): ?>
+                    <div class="success-message">
+                        <?= session()->getFlashdata('success'); ?>
                     </div>
-                </div>
-                
-                <div class="form-row">
-                    <div class="form-group full-width">
-                        <input type="text" class="form-input" placeholder="Alamat" name="alamat" value="<?= $user['alamat'] ?>">
-                    </div>
-                </div>
-                
-                <div class="form-row">
-                    <div class="form-group full-width">
-                        <input type="email" class="form-input" placeholder="Email" name="email" value="<?= $user['email'] ?>">
-                    </div>
-                </div>
-                
-                <div class="form-row">
-                    <div class="form-group full-width">
-                        <input type="tel" class="form-input" placeholder="No HP" name="no_hp" value="<?= $user['no_hp'] ?>">
-                    </div>
-                </div>
+                <?php endif; ?>
 
-                <div class="form-buttons">
-                    <button class="btn-save" type="submit">Simpan</button>
-                </div>
-            </form>
-        </div>
+                <?php if (session()->getFlashdata('error')): ?>
+                    <div class="error-message">
+                        <?= session()->getFlashdata('error'); ?>
+                    </div>
+                <?php endif; ?>
 
-        <div class="sidebar">
-            <h1 class="profile-title">Ganti Password</h1>
-            
-            <?php if(session()->getFlashdata('successp')): ?>
-                <div class="success-message">
-                    <?= session()->getFlashdata('successp'); ?>
-                </div>
-            <?php endif; ?>
-            
-            <?php if(session()->getFlashdata('errorp')): ?>
-                <div class="error-message">
-                    <?= session()->getFlashdata('errorp'); ?>
-                </div>
-            <?php endif; ?>
-
-            <div class="password-form">
-                <form method="post" action="<?= base_url('/user/profil/update-password') ?>">
+                <form method="post" action="<?= base_url('/user/profil/update') ?>">
                     <div class="form-row">
-                        <div class="form-group full-width">
-                            <input type="password" class="form-input" placeholder="Password Lama" name="old_password" required>
+                        <div class="form-group">
+                            <input type="text" class="form-input" placeholder="Nama awal" name="nama" value="<?= $user['nama'] ?>">
                         </div>
                     </div>
-                    
+
                     <div class="form-row">
                         <div class="form-group full-width">
-                            <input type="password" class="form-input" placeholder="Password Baru" name="new_password" required>
+                            <input type="text" class="form-input" placeholder="Alamat" name="alamat" value="<?= $user['alamat'] ?>">
                         </div>
                     </div>
-                    
+
                     <div class="form-row">
                         <div class="form-group full-width">
-                            <input type="password" class="form-input" placeholder="Konfirmasi Password Baru" name="confirm_password" required>
+                            <input type="email" class="form-input" placeholder="Email" name="email" value="<?= $user['email'] ?>">
                         </div>
                     </div>
-                    
+
+                    <div class="form-row">
+                        <div class="form-group full-width">
+                            <input type="tel" class="form-input" placeholder="No HP" name="no_hp" value="<?= $user['no_hp'] ?>">
+                        </div>
+                    </div>
+
                     <div class="form-buttons">
                         <button class="btn-save" type="submit">Simpan</button>
                     </div>
                 </form>
             </div>
 
-            <button class="sidebar-btn btn-primary" type="button" onclick="logout()">Logout</button>
+            <div class="sidebar">
+                <h1 class="profile-title">Ganti Password</h1>
+
+                <?php if (session()->getFlashdata('successp')): ?>
+                    <div class="success-message">
+                        <?= session()->getFlashdata('successp'); ?>
+                    </div>
+                <?php endif; ?>
+
+                <?php if (session()->getFlashdata('errorp')): ?>
+                    <div class="error-message">
+                        <?= session()->getFlashdata('errorp'); ?>
+                    </div>
+                <?php endif; ?>
+
+                <div class="password-form">
+                    <form method="post" action="<?= base_url('/user/profil/update-password') ?>">
+                        <div class="form-row">
+                            <div class="form-group full-width">
+                                <input type="password" class="form-input" placeholder="Password Lama" name="old_password" required>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group full-width">
+                                <input type="password" class="form-input" placeholder="Password Baru" name="new_password" required>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group full-width">
+                                <input type="password" class="form-input" placeholder="Konfirmasi Password Baru" name="confirm_password" required>
+                            </div>
+                        </div>
+
+                        <div class="form-buttons">
+                            <button class="btn-save" type="submit">Simpan</button>
+                        </div>
+                    </form>
+                </div>
+
+                <button class="sidebar-btn btn-primary" type="button" onclick="logout()">Logout</button>
+            </div>
         </div>
-    </div>
-            
+
     </main>
 
     <script>
@@ -334,30 +336,30 @@
             input.addEventListener('focus', function() {
                 this.style.borderColor = '#666';
             });
-            
+
             input.addEventListener('blur', function() {
                 this.style.borderColor = '#ddd';
             });
         });
 
         function logout() {
-    Swal.fire({
-        title: 'Konfirmasi Logout',
-        text: 'Apakah Anda yakin ingin logout?',
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#d33',
-        confirmButtonText: 'Ya, Logout',
-        cancelButtonText: 'Batal'
-    }).then((result) => {
-        if (result.isConfirmed) {
-            window.location.href = '<?= base_url('/logout') ?>';
+            Swal.fire({
+                title: 'Konfirmasi Logout',
+                text: 'Apakah Anda yakin ingin logout?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Ya, Logout',
+                cancelButtonText: 'Batal'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = '<?= base_url('/logout') ?>';
+                }
+            });
         }
-    });
-}
-
     </script>
 </body>
+
 </html>
 <?= $this->endSection(); ?>

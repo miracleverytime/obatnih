@@ -75,8 +75,4 @@ class LoginController extends Controller
         // Jika email tidak ditemukan di semua model
         return redirect()->back()->withInput()->with('error', 'Email tidak ditemukan');
     }
-
-
-
-
 }

@@ -2,54 +2,60 @@
 <?= $this->section('content'); ?>
 
 <style>
-.card-obat {
-  border-radius: 12px;
-  border: 1px solid #e0e0e0;
-  transition: all 0.3s ease-in-out;
-}
-.card-obat:hover {
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.07);
-  transform: translateY(-4px);
-}
-.catalog-img {
-  height: 200px;
-  object-fit: contain;
-  padding: 12px;
-  border-bottom: 1px solid #f0f0f0;
-}
-.card-body h6 {
-  font-size: 16px;
-  font-weight: 600;
-  margin-bottom: 8px;
-  color: #333;
-}
-.card-body p {
-  font-size: 14px;
-  margin: 0;
-}
-.harga {
-  color: #28a745;
-  font-weight: 600;
-  font-size: 15px;
-}
-.detail-btn {
-  margin-top: 12px;
-}
+  .card-obat {
+    border-radius: 12px;
+    border: 1px solid #e0e0e0;
+    transition: all 0.3s ease-in-out;
+  }
+
+  .card-obat:hover {
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.07);
+    transform: translateY(-4px);
+  }
+
+  .catalog-img {
+    height: 200px;
+    object-fit: contain;
+    padding: 12px;
+    border-bottom: 1px solid #f0f0f0;
+  }
+
+  .card-body h6 {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: #333;
+  }
+
+  .card-body p {
+    font-size: 14px;
+    margin: 0;
+  }
+
+  .harga {
+    color: #28a745;
+    font-weight: 600;
+    font-size: 15px;
+  }
+
+  .detail-btn {
+    margin-top: 12px;
+  }
 </style>
 
 <main class="container mt-4 mb-5">
   <div class="row">
-    <?php if(session()->getFlashdata('success')): ?>
+    <?php if (session()->getFlashdata('success')): ?>
       <script>
-          Swal.fire({
-              icon: 'success',
-              title: 'Berhasil!',
-              text: '<?= session()->getFlashdata('success'); ?>',
-              confirmButtonColor: '#3085d6',
-              confirmButtonText: 'OK'
-          });
+        Swal.fire({
+          icon: 'success',
+          title: 'Berhasil!',
+          text: '<?= session()->getFlashdata('success'); ?>',
+          confirmButtonColor: '#3085d6',
+          confirmButtonText: 'OK'
+        });
       </script>
-      <?php endif; ?>
+    <?php endif; ?>
     <?php if (!empty($obat)): ?>
       <?php foreach ($obat as $item): ?>
         <div class="col-sm-6 col-md-4 col-lg-3 mb-4">

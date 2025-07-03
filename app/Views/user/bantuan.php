@@ -28,7 +28,7 @@
     .chat-container {
         background-color: white;
         border-radius: 8px;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         height: 500px;
         display: flex;
         flex-direction: column;
@@ -100,7 +100,7 @@
     }
 
     .message.user .message-time {
-        color: rgba(255,255,255,0.8);
+        color: rgba(255, 255, 255, 0.8);
     }
 
     .welcome-message {
@@ -182,7 +182,7 @@
 
 <div class="container">
     <h1 class="page-title">Bantuan Konsultasi</h1>
-    
+
     <div class="chat-container">
         <div class="chat-messages" id="chatMessages">
             <?php if (empty($chats)): ?>
@@ -207,18 +207,17 @@
                 <?php endforeach; ?>
             <?php endif; ?>
         </div>
-        
+
         <div class="loading" id="loadingIndicator">
             Mengirim pesan...
         </div>
-        
+
         <div class="chat-input-container">
-            <textarea 
-                class="chat-input" 
-                id="chatInput" 
-                placeholder="Ketik pesan Anda di sini..." 
-                rows="1"
-            ></textarea>
+            <textarea
+                class="chat-input"
+                id="chatInput"
+                placeholder="Ketik pesan Anda di sini..."
+                rows="1"></textarea>
             <button class="send-btn" id="sendBtn" onclick="sendMessage()">
                 ⬆️
             </button>
@@ -259,66 +258,69 @@
 
         // Kirim pesan ke server
         fetch('<?= base_url('user/sendMessage') ?>', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-                'X-Csrf-Token': '<?= csrf_token() ?>'
-            },
-            body: 'message=' + encodeURIComponent(message) + '&<?= csrf_token() ?>=' + '<?= csrf_hash() ?>'
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.status === 'success') {
-                // Tambahkan pesan ke chat
-                addMessage(message, 'user', new Date());
-                chatInput.value = '';
-                chatInput.style.height = 'auto';
-                
-                // Hapus welcome message jika ada
-                if (welcomeMessage) {
-                    welcomeMessage.remove();
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-Csrf-Token': '<?= csrf_token() ?>'
+                },
+                body: 'message=' + encodeURIComponent(message) + '&<?= csrf_token() ?>=' + '<?= csrf_hash() ?>'
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    // Tambahkan pesan ke chat
+                    addMessage(message, 'user', new Date());
+                    chatInput.value = '';
+                    chatInput.style.height = 'auto';
+
+                    // Hapus welcome message jika ada
+                    if (welcomeMessage) {
+                        welcomeMessage.remove();
+                    }
+                } else {
+                    alert('Gagal mengirim pesan: ' + data.message);
                 }
-            } else {
-                alert('Gagal mengirim pesan: ' + data.message);
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('Terjadi kesalahan saat mengirim pesan');
-        })
-        .finally(() => {
-            // Enable input kembali
-            chatInput.disabled = false;
-            sendBtn.disabled = false;
-            loadingIndicator.style.display = 'none';
-            chatInput.focus();
-        });
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Terjadi kesalahan saat mengirim pesan');
+            })
+            .finally(() => {
+                // Enable input kembali
+                chatInput.disabled = false;
+                sendBtn.disabled = false;
+                loadingIndicator.style.display = 'none';
+                chatInput.focus();
+            });
     }
 
     function addMessage(text, sender, timestamp) {
         const messageDiv = document.createElement('div');
         messageDiv.className = `message ${sender}`;
-        
+
         const avatar = document.createElement('div');
         avatar.className = 'message-avatar';
         avatar.textContent = sender === 'user' ? '👤' : '🧑‍⚕️';
-        
+
         const messageContent = document.createElement('div');
         messageContent.className = 'message-content';
-        
+
         const bubble = document.createElement('div');
         bubble.className = 'message-bubble';
         bubble.textContent = text;
-        
+
         const time = document.createElement('div');
         time.className = 'message-time';
-        time.textContent = timestamp.toLocaleTimeString('id-ID', {hour: '2-digit', minute: '2-digit'});
-        
+        time.textContent = timestamp.toLocaleTimeString('id-ID', {
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+
         messageContent.appendChild(bubble);
         messageContent.appendChild(time);
         messageDiv.appendChild(avatar);
         messageDiv.appendChild(messageContent);
-        
+
         chatMessages.appendChild(messageDiv);
         chatMessages.scrollTop = chatMessages.scrollHeight;
     }
@@ -326,19 +328,19 @@
     // Auto refresh untuk mendapatkan balasan dari apoteker
     function checkNewMessages() {
         fetch('<?= base_url('user/getMessages') ?>')
-        .then(response => response.json())
-        .then(data => {
-            if (data.status === 'success') {
-                const currentMessages = chatMessages.querySelectorAll('.message').length;
-                if (data.data.length > currentMessages) {
-                    // Ada pesan baru, reload halaman atau update secara dinamis
-                    location.reload();
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    const currentMessages = chatMessages.querySelectorAll('.message').length;
+                    if (data.data.length > currentMessages) {
+                        // Ada pesan baru, reload halaman atau update secara dinamis
+                        location.reload();
+                    }
                 }
-            }
-        })
-        .catch(error => {
-            console.error('Error checking messages:', error);
-        });
+            })
+            .catch(error => {
+                console.error('Error checking messages:', error);
+            });
     }
 
     // Check pesan baru setiap 10 detik
